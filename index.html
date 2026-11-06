@@ -6,7 +6,7 @@
 <meta name="theme-color" content="#ffffff">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
-<title>ฝึกที่หอ</title>
+<title>FitWeeks</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
@@ -118,6 +118,56 @@ details ul{padding-left:18px;margin:8px 0 0}details li{margin:4px 0}
 .stp b{min-width:48px;text-align:center}
 .srow input{width:22px;height:22px;accent-color:var(--g)}
 </style>
+<meta name="apple-mobile-web-app-title" content="FitWeeks">
+<script>
+(function(){
+  function rr(x,a,b,w,h,r){x.beginPath();x.moveTo(a+r,b);x.arcTo(a+w,b,a+w,b+h,r);x.arcTo(a+w,b+h,a,b+h,r);x.arcTo(a,b+h,a,b,r);x.arcTo(a,b,a+w,b,r);x.closePath();x.fill();}
+  function star(x,cx,cy,r){x.beginPath();for(let i=0;i<8;i++){const a=i*Math.PI/4-Math.PI/2,d=i%2?r*.28:r;x.lineTo(cx+Math.cos(a)*d,cy+Math.sin(a)*d);}x.closePath();x.fill();}
+  function makeIcon(size){
+    const c=document.createElement('canvas');c.width=c.height=size;
+    const x=c.getContext('2d');x.scale(size/512,size/512);
+    // พื้นหลังไล่สี (เต็มสี่เหลี่ยม ให้มือถือโค้งมุมเอง)
+    const g=x.createLinearGradient(0,0,512,512);
+    g.addColorStop(0,'#5eead4');g.addColorStop(.55,'#22c58b');g.addColorStop(1,'#0f9d6b');
+    x.fillStyle=g;x.fillRect(0,0,512,512);
+    // แสงอาทิตย์ด้านบนขวา
+    const s=x.createRadialGradient(420,90,10,420,90,260);
+    s.addColorStop(0,'rgba(255,224,102,.95)');s.addColorStop(.35,'rgba(255,200,80,.45)');s.addColorStop(1,'rgba(255,200,80,0)');
+    x.fillStyle=s;x.fillRect(0,0,512,512);
+    // วงกลมจางๆ ด้านหลัง
+    x.fillStyle='rgba(255,255,255,.16)';x.beginPath();x.arc(256,270,190,0,7);x.fill();
+    // ดัมเบล
+    x.save();x.translate(256,272);x.rotate(-Math.PI/7);
+    x.shadowColor='rgba(0,70,45,.35)';x.shadowBlur=22;x.shadowOffsetY=12;
+    x.fillStyle='#fff';
+    rr(x,-135,-15,270,30,15);          // แกน
+    rr(x,-118,-74,40,148,16);          // แผ่นในซ้าย
+    rr(x,78,-74,40,148,16);            // แผ่นในขวา
+    rr(x,-160,-50,34,100,13);          // แผ่นนอกซ้าย
+    rr(x,126,-50,34,100,13);           // แผ่นนอกขวา
+    x.shadowColor='transparent';
+    x.fillStyle='#ffb020';             // แถบสีส้มกลางแผ่น
+    rr(x,-106,-30,16,60,8);rr(x,90,-30,16,60,8);
+    x.restore();
+    // ประกายดาว
+    x.fillStyle='#fff';star(x,112,118,40);
+    x.globalAlpha=.85;star(x,170,66,20);star(x,92,196,16);
+    return c.toDataURL('image/png');
+  }
+  const url=makeIcon(512), small=makeIcon(180);
+  const add=(rel,href,extra)=>{const l=document.createElement('link');l.rel=rel;l.href=href;if(extra)l.sizes=extra;document.head.appendChild(l);};
+  document.querySelectorAll('link[rel*="icon"],link[rel="manifest"]').forEach(e=>e.remove());
+  add('apple-touch-icon',small,'180x180');
+  add('icon',url,'512x512');
+  // manifest สำหรับ Android
+  const mf={name:'FitWeeks',short_name:'FitWeeks',start_url:location.href.split('#')[0],display:'standalone',
+    background_color:'#ffffff',theme_color:'#16a36a',icons:[{src:url,sizes:'512x512',type:'image/png',purpose:'any maskable'}]};
+  add('manifest',URL.createObjectURL(new Blob([JSON.stringify(mf)],{type:'application/manifest+json'})));
+  // เปิด yoursite/#icon เพื่อดูและเซฟรูปไอคอนไว้ใช้
+  if(location.hash==='#icon')document.addEventListener('DOMContentLoaded',()=>{
+    document.body.innerHTML='<div style="display:grid;place-items:center;min-height:100vh;gap:12px;font-family:sans-serif"><img src="'+url+'" style="width:min(80vw,320px);border-radius:22%"><p>กดค้างที่รูปเพื่อบันทึก</p></div>';});
+})();
+</script>
 </head>
 <body>
 
