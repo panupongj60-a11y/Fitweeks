@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#ffffff">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<title>ฝึกที่หอ</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Prompt:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#1d2b3a;--sub:#6b7889;--g:#16a36a;--g2:#e4f7ee;--gb:#3cc68a;--blue:#eef5fc;--line:#e5eaf0;--red:#e5484d;--org:#f59e0b}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:#fff;color:var(--ink);font-family:Prompt,system-ui,-apple-system,sans-serif}
+button{font-family:inherit;color:inherit;cursor:pointer}
+svg{display:block;width:100%;height:100%}
+.app{max-width:480px;margin:0 auto;padding:16px 14px calc(40px + env(safe-area-inset-bottom));display:flex;flex-direction:column;gap:14px}
+.hdr{display:flex;align-items:center;justify-content:space-between}
+.hdr h1{margin:0;font-size:22px}
+.icon{border:0;background:var(--blue);width:40px;height:40px;border-radius:12px;font-size:18px}
+.tabs{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}
+.tab{border:1.5px solid var(--line);background:#fff;border-radius:14px;padding:6px 0;display:flex;flex-direction:column;align-items:center;gap:2px;position:relative}
+.tab b{font-size:15px}.tab small{font-size:11px;color:var(--sub)}
+.tab.on{border-color:var(--gb);background:var(--g2)}.tab.on small{color:var(--g)}
+.tab.today::after{content:'';position:absolute;top:4px;right:6px;width:6px;height:6px;border-radius:50%;background:var(--org)}
+.tab.ok small{color:var(--g);font-weight:700}
+#main{display:flex;flex-direction:column;gap:14px}
+.dayhead{background:linear-gradient(135deg,#1fae6e,#13845a);color:#fff;border-radius:20px;padding:16px}
+.dayhead small{opacity:.85}.dayhead h2{margin:2px 0;font-size:21px}.dayhead p{margin:0;opacity:.92;font-size:14px}
+.bar{height:8px;background:rgba(255,255,255,.3);border-radius:8px;margin-top:10px;overflow:hidden}
+.bar i{display:block;height:100%;background:#fff;border-radius:8px;transition:width .3s}
+.sec{background:var(--blue);border-radius:20px;padding:14px}
+.sech{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:10px}
+.sech h3{margin:0;font-size:17px;color:#1d3b6a}
+.play{border:0;background:#1d3b6a;color:#fff;border-radius:12px;padding:8px 14px;font-weight:600;font-size:14px;white-space:nowrap}
+.hs{display:flex;gap:10px;overflow-x:auto;scroll-snap-type:x mandatory;padding:2px 2px 6px;scrollbar-width:none}
+.hs::-webkit-scrollbar{display:none}
+.mini{flex:0 0 100px;scroll-snap-align:start;border:0;background:none;padding:0;text-align:left}
+.fbox{background:#fff;border-radius:14px;aspect-ratio:1;box-shadow:0 1px 4px rgba(29,59,106,.08);overflow:hidden}
+.mini b{display:block;font-size:13px;line-height:1.3;margin-top:6px;font-weight:600}
+.mini small{font-size:12px;color:var(--sub)}
+.hint{margin:6px 0 0;font-size:12px;color:var(--sub)}
+.ex{border:1.5px solid var(--line);border-radius:20px;padding:14px;background:#fff;transition:.2s}
+.ex.active{border:2px solid var(--gb);box-shadow:0 0 0 4px var(--g2)}
+.ex.done{background:#fafcfb}
+.row1{display:flex;gap:12px;align-items:flex-start}
+.thumb{position:relative;width:76px;height:76px;flex:none}
+.thumb .fbox{width:100%;height:100%;background:#f5f7fa;box-shadow:none}
+.num{position:absolute;top:-6px;left:-6px;width:26px;height:26px;border-radius:50%;background:var(--g2);color:var(--g);font-weight:700;font-size:13px;display:grid;place-items:center;border:2px solid #fff}
+.ex.done .num{background:var(--g);color:#fff}
+.info{flex:1;min-width:0}
+.info b{display:block;font-size:17px;line-height:1.25}
+.info small{display:block;color:var(--sub);font-size:13px;margin-top:2px}
+.lnk{border:0;background:none;padding:4px 0 0;color:var(--g);font-weight:600;font-size:13px}
+.tgt{border:1.5px solid var(--gb);color:var(--g);border-radius:10px;padding:4px 9px;font-weight:700;font-size:14px;white-space:nowrap;text-align:center;line-height:1.2}
+.tgt i{display:block;font-style:normal;font-size:10px;font-weight:500}
+.setrow{display:flex;align-items:center;justify-content:space-between;margin-top:12px}
+.circles{display:flex;gap:8px}
+.cir{width:42px;height:42px;border-radius:50%;border:1.5px solid var(--line);background:#fff;color:#b5bfcb;font-weight:600;font-size:15px}
+.cir.c{border:2px solid var(--gb);color:var(--g)}
+.cir.d{background:var(--g);border-color:var(--g);color:#fff}
+.stxt{color:var(--g);font-weight:600;font-size:14px}
+.primary{width:100%;border:0;border-radius:16px;background:var(--g);color:#fff;font-weight:700;font-size:18px;padding:15px;margin-top:12px}
+.primary:active{transform:scale(.98)}
+.skip{display:block;margin:6px auto 0;border:0;background:none;color:var(--sub);font-size:13px;text-decoration:underline;padding:6px}
+.card{border:1.5px solid var(--line);border-radius:20px;padding:18px;text-align:center}
+.card .em{font-size:48px}
+.seg{display:flex;gap:8px;margin-bottom:10px}
+.seg button{flex:1;border:1.5px solid var(--line);background:#fff;border-radius:12px;padding:8px;font-weight:600}
+.seg button.on{border-color:var(--gb);background:var(--g2);color:var(--g)}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.grid3 .mini{flex:none}
+details{border:1.5px solid var(--line);border-radius:16px;padding:12px 14px;font-size:14px;color:#3a4859}
+summary{font-weight:600;cursor:pointer}
+details ul{padding-left:18px;margin:8px 0 0}details li{margin:4px 0}
+.foot{font-size:12px;color:var(--sub);text-align:center;margin:0}
+.ov{position:fixed;inset:0;background:#fff;z-index:20;overflow:auto}
+.hidden{display:none!important}
+.ovin{max-width:480px;margin:0 auto;min-height:100%;padding:14px 18px calc(24px + env(safe-area-inset-bottom));display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center}
+.ovtop{width:100%;display:flex;justify-content:space-between;align-items:center}
+.pill{background:var(--g2);color:var(--g);border-radius:20px;padding:6px 14px;font-weight:700;font-size:14px}
+.ov.rest .pill{background:#e8f0fb;color:#1d3b6a}
+.ov.big .pill{background:#fff1d6;color:#b86b00}
+.x{border:0;background:#f1f4f7;width:38px;height:38px;border-radius:50%;font-size:16px}
+.seqt{font-size:13px;color:var(--sub);min-height:18px}
+.cap{font-size:13px;color:var(--sub)}
+.ovfig{width:min(52vw,220px);aspect-ratio:1;background:#f5f7fa;border-radius:24px;overflow:hidden}
+.ov.rest .ovfig{width:min(34vw,130px)}
+.ovin h2{margin:0;font-size:22px}
+.sub{margin:0;color:var(--sub);font-size:14px}
+.ring{position:relative;width:min(50vw,190px);aspect-ratio:1}
+.ring svg{transform:rotate(-90deg)}
+.ring .n{position:absolute;inset:0;display:grid;place-items:center;font-size:62px;font-weight:700}
+#rb{transition:stroke-dashoffset .25s linear}
+.ov.rest #rb{stroke:#1d3b6a}.ov.big #rb{stroke:var(--org)}
+.ov.warn{background:#fff3f3}
+.ov.warn .n{color:var(--red);animation:pulse 1s infinite}
+.ov.warn #rb{stroke:var(--red)}
+@keyframes pulse{50%{transform:scale(1.12)}}
+.reps{font-size:38px;font-weight:700;color:var(--g);margin:14px 0}
+.msg{margin:0;font-weight:600;font-size:16px;min-height:24px}
+.btns{display:flex;gap:10px;width:100%;margin-top:auto}
+.sec2{flex:1;border:1.5px solid var(--line);background:#fff;border-radius:14px;padding:13px;font-weight:600;font-size:16px}
+.check{width:120px;height:120px;border-radius:50%;background:var(--g);color:#fff;font-size:70px;display:grid;place-items:center;margin-top:12vh;animation:pop .6s}
+@keyframes pop{0%{transform:scale(0)}70%{transform:scale(1.15)}}
+.sheet{background:rgba(20,30,45,.45)}
+.sheetin{position:absolute;left:0;right:0;bottom:0;max-width:480px;margin:0 auto;background:#fff;border-radius:24px 24px 0 0;padding:18px 18px calc(24px + env(safe-area-inset-bottom));max-height:92vh;overflow:auto}
+.sheetin .x{float:right}
+.sheetin .ovfig{margin:4px auto 10px}
+.sheetin h2{margin:0;font-size:21px;text-align:center}
+.sheetin .sub{text-align:center;margin:2px 0 10px}
+.sheetin ol{padding-left:20px;margin:8px 0}.sheetin li{margin:5px 0}
+.lv{background:var(--blue);border-radius:14px;padding:10px 12px;font-size:14px}.lv p{margin:4px 0}
+.srow{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--line);gap:10px}
+.stp{display:flex;align-items:center;gap:8px}
+.stp button{width:34px;height:34px;border-radius:50%;border:0;background:var(--g2);color:var(--g);font-size:20px}
+.stp b{min-width:48px;text-align:center}
+.srow input{width:22px;height:22px;accent-color:var(--g)}
+</style>
+</head>
+<body>
+
+<div class="app">
+  <div class="hdr"><h1>ฝึกที่หอ 💪</h1><button class="icon" data-act="openSet" aria-label="ตั้งค่า">⚙️</button></div>
+  <div class="tabs" id="tabs"></div>
+  <div id="main"></div>
+  <details><summary>💡 ปรับตารางตามเวลาที่มี</summary><ul>
+    <li><b>ว่าง 2 วัน:</b> ทำวัน A กับ B โดยเว้นอย่างน้อย 1 วัน เช่น จันทร์–พฤหัส</li>
+    <li><b>ว่าง 3 วัน:</b> จันทร์ A · พุธ B · ศุกร์ A (ตามแอป)</li>
+    <li><b>ว่าง 4 วัน:</b> เพิ่มวัน C ในวันเสาร์</li>
+    <li><b>สัปดาห์ถัดไป:</b> เปิด "สัปดาห์สลับ" ในตั้งค่า เพื่อทำ B · A · B</li>
+  </ul></details>
+  <details><summary>📈 เพิ่มความหนักเมื่อแข็งแรงขึ้น</summary><ul>
+    <li>ทำได้ครบจำนวนสูงสุดทุกเซ็ตโดยท่าถูกต้อง → เพิ่มจำนวนครั้ง</li>
+    <li>จากนั้นเพิ่มเป็น 4 เซ็ต หรือเปลี่ยนเป็นท่าที่ยากขึ้น (ดูได้ในปุ่ม "ดูท่าตัวอย่าง")</li>
+    <li>ลงช้า 4 วินาที / ค้างกลางท่า 2 วินาที / ลดเวลาพัก</li>
+    <li>เปลี่ยนทีละอย่าง และให้ร่างกายปรับตัว 1–2 สัปดาห์</li>
+  </ul></details>
+  <details><summary>⚠️ ความปลอดภัย</summary><ul>
+    <li>หยุดทันทีถ้าเจ็บแน่นหน้าอก หน้ามืด หายใจไม่ทัน หรือเจ็บแปลบที่ข้อ</li>
+    <li>มีโรคประจำตัว หรือเคยบาดเจ็บเข่า/หลัง ควรปรึกษาแพทย์ก่อน</li>
+    <li>ปวดเมื่อย 1–3 วันหลังฝึกเป็นเรื่องปกติของมือใหม่</li>
+  </ul></details>
+  <p class="foot">ข้อมูลทั่วไป ไม่ใช่คำแนะนำทางการแพทย์เฉพาะบุคคล</p>
+</div>
+
+<!-- หน้าจับเวลา / พัก -->
+<div id="ov" class="ov hidden"><div class="ovin">
+  <div class="ovtop"><span class="pill" id="ovB"></span><button class="x" data-act="closeOv">✕</button></div>
+  <div class="seqt" id="ovQ"></div>
+  <div class="cap" id="ovCap"></div>
+  <div class="ovfig" id="ovFig"></div>
+  <h2 id="ovT"></h2><p class="sub" id="ovS"></p>
+  <div class="ring" id="ovRing"><svg viewBox="0 0 120 120"><circle cx="60" cy="60" r="54" fill="none" stroke="#e8edf2" stroke-width="9"/><circle id="rb" cx="60" cy="60" r="54" fill="none" stroke="#16a36a" stroke-width="9" stroke-linecap="round" stroke-dasharray="339.29"/></svg><div class="n" id="ovN"></div></div>
+  <div class="reps hidden" id="ovR"></div>
+  <p class="msg" id="ovM"></p>
+  <div class="btns" id="bT"><button class="sec2" data-act="plus">+10 วิ</button><button class="sec2" data-act="skipStep">ข้าม ▶</button></div>
+  <button class="primary hidden" id="bD" data-act="skipStep">✓ เสร็จแล้ว ถัดไป</button>
+</div></div>
+
+<!-- หน้าสำเร็จ -->
+<div id="done" class="ov hidden"><div class="ovin">
+  <div class="check">✓</div>
+  <h2 style="font-size:28px">สำเร็จ! 🎉</h2>
+  <p class="sub" id="doneT"></p>
+  <button class="primary" id="bCool" data-act="coolFromDone">▶ ไปคูลดาวน์ต่อ (~6 นาที)</button>
+  <button class="skip" data-act="closeDone">ปิด</button>
+</div></div>
+
+<!-- ดูท่าตัวอย่าง -->
+<div id="info" class="ov sheet hidden"><div class="sheetin">
+  <button class="x" data-act="closeInfo">✕</button>
+  <div class="ovfig" id="iF"></div>
+  <h2 id="iN"></h2><p class="sub" id="iS"></p>
+  <ol id="iH"></ol>
+  <div class="lv"><p><b>🟢 ง่ายลง:</b> <span id="iE"></span></p><p><b>🔴 ยากขึ้น:</b> <span id="iX"></span></p></div>
+</div></div>
+
+<!-- ตั้งค่า -->
+<div id="set" class="ov sheet hidden"><div class="sheetin">
+  <button class="x" data-act="closeSet">✕</button>
+  <h2 style="text-align:left">ตั้งค่า</h2>
+  <div class="srow"><span>พักระหว่างเซ็ต</span><div class="stp"><button data-act="step" data-k="restSet" data-d="-15">−</button><b id="v-restSet"></b><button data-act="step" data-k="restSet" data-d="15">+</button></div></div>
+  <div class="srow"><span>พักใหญ่ (จบท่า/จบรอบ)</span><div class="stp"><button data-act="step" data-k="restBig" data-d="-15">−</button><b id="v-restBig"></b><button data-act="step" data-k="restBig" data-d="15">+</button></div></div>
+  <div class="srow"><span>รอบเซอร์กิตวัน C</span><div class="stp"><button data-act="step" data-k="rounds" data-d="-1">−</button><b id="v-rounds"></b><button data-act="step" data-k="rounds" data-d="1">+</button></div></div>
+  <div class="srow"><span>เสียงเตือน</span><input type="checkbox" id="cSound"></div>
+  <div class="srow"><span>สัปดาห์สลับ (B · A · B)</span><input type="checkbox" id="cAlt"></div>
+  <button class="primary" data-act="testSound">🔊 ทดสอบเสียง</button>
+  <button class="skip" data-act="resetWeek">ล้างความคืบหน้าสัปดาห์นี้</button>
+</div></div>
+
+<script>
+const $=id=>document.getElementById(id);
+const CIRC=339.29;
+
+/* ========== ท่าทาง (จุด: 0หัว 1คอ 2สะโพก 3ศอกA 4มือA 5ศอกB 6มือB 7เข่าA 8เท้าA 9เข่าB 10เท้าB 11กลางหลัง) ========== */
+const mod=(b,o)=>{const p=b.map(x=>[...x]);for(const k in o)p[k]=o[k];return p;};
+const lift=(b,d)=>b.map(([x,y])=>[x,y-d]);
+const ST=[[50,16],[50,26],[50,52],[50,39],[51,51],[50,39],[51,51],[51,72],[50,92],[50,72],[49,92]];
+const STH=mod(ST,{3:[44,40],4:[49,50],5:[45,40],6:[50,50]});
+const FR=[[50,16],[50,26],[50,52],[42,38],[40,50],[58,38],[60,50],[46,72],[45,92],[54,72],[55,92]];
+const QD=[[77,62],[68,66],[40,68],[68,79],[68,92],[69,79],[69,92],[40,90],[20,91],[41,90],[21,91]];
+const WR='<rect x="72" y="6" width="5" height="88" rx="2" fill="#d5dde7"/>';
+const WL='<rect x="20" y="6" width="5" height="88" rx="2" fill="#d5dde7"/>';
+const MA=mod(ST,{3:[44,38],4:[42,50],5:[58,36],6:[64,28],7:[68,58],8:[68,76]});
+const MB=mod(ST,{3:[58,36],4:[64,28],5:[44,38],6:[42,50],9:[68,58],10:[68,76]});
+const WA=mod(ST,{3:[46,39],4:[43,50],5:[54,38],6:[59,49],7:[54,72],8:[57,92],9:[46,72],10:[42,91]});
+const WB=mod(ST,{3:[54,38],4:[59,49],5:[46,39],6:[43,50],7:[46,72],8:[42,91],9:[54,72],10:[57,92]});
+const K1=mod(FR,{3:[44,14],4:[40,3],5:[56,14],6:[60,3]});
+const K2=mod(FR,{3:[37,25],4:[25,24],5:[63,25],6:[75,24]});
+const K3=mod(FR,{3:[41,37],4:[35,47],5:[59,37],6:[65,47]});
+const H1=mod(FR,{2:[45,52],3:[37,40],4:[39,51],5:[60,40],6:[51,51],7:[44,72],9:[53,72]});
+const H2=mod(FR,{2:[55,52],3:[40,40],4:[49,51],5:[63,40],6:[61,51],7:[47,72],9:[56,72]});
+const L0=mod(ST,{3:[44,40],4:[49,50],5:[60,30],6:[70,33]});
+const SQ0=mod(ST,{3:[63,27],4:[75,28],5:[63,28],6:[75,29]});
+const SQ1=[[52,38],[48,47],[36,70],[60,48],[72,49],[60,49],[72,50],[55,73],[50,92],[56,73],[51,92]];
+const KP1=[[80,62],[72,67],[53,79],[72,79],[72,92],[73,79],[73,92],[36,90],[18,82],[37,90],[19,82]];
+const KP2=[[81,80],[72,82],[55,86],[63,86],[72,92],[64,86],[73,92],[36,90],[18,82],[37,90],[19,82]];
+const BR1=[[15,86],[24,88],[46,89],[34,90],[46,91],[35,90],[47,91],[58,72],[64,92],[59,72],[65,92]];
+const BR2=mod(BR1,{2:[46,76],7:[64,72],9:[65,72]});
+const SU1=[[78,86],[70,89],[44,90],[82,89],[94,89],[82,90],[94,90],[24,90],[6,90],[24,91],[6,91]];
+const SU2=[[78,81],[70,85],[44,90],[82,81],[93,76],[82,82],[93,77],[24,87],[6,82],[24,88],[6,83]];
+const DB1=[[18,87],[28,88],[52,88],[18,80],[8,74],[28,76],[28,64],[52,68],[70,68],[71,84],[90,86]];
+const DB2=[[18,87],[28,88],[52,88],[28,76],[28,64],[18,80],[8,74],[71,84],[90,86],[52,68],[70,68]];
+const PL1=[[79,75],[70,78],[44,81],[70,91],[82,91],[71,91],[83,91],[24,85],[4,89],[25,85],[5,89]];
+const PL2=mod(PL1,{2:[44,79],7:[24,84],9:[25,84]});
+const LU=[[49,34],[49,44],[49,70],[43,57],[48,67],[44,57],[49,67],[68,72],[68,92],[40,88],[22,90]];
+const GM1=mod(ST,{3:[58,18],4:[46,14],5:[58,18],6:[46,14]});
+const GM2=[[77,41],[68,45],[44,54],[79,38],[69,37],[79,38],[69,37],[52,72],[50,92],[51,72],[49,92]];
+const DD1=[[75,78],[70,72],[54,52],[76,82],[82,92],[77,82],[83,92],[44,72],[34,92],[45,72],[35,92]];
+const DD2=[[77,79],[72,72],[56,50],[77,82],[82,92],[78,82],[83,92],[45,72],[34,92],[46,72],[35,92]];
+const BD=mod(QD,{3:[80,63],4:[92,61],7:[20,67],8:[1,66]});
+const SP1=[[14,70],[22,74],[47,84],[22,90],[34,90],[22,62],[22,50],[68,89],[82,80],[69,89],[83,80]];
+const SP2=mod(SP1,{2:[47,79]});
+const X0=mod(FR,{3:[38,20],4:[46,13],5:[62,20],6:[54,13]});
+const X1=[[45,19],[47,29],[50,52],[36,24],[42,16],[44,39],[52,26],[43,38],[44,56],[54,72],[55,92]];
+const X2=[[55,19],[53,29],[50,52],[56,39],[48,26],[64,24],[58,16],[46,72],[45,92],[57,38],[56,56]];
+const MC1=[[84,63],[76,67],[50,72],[76,79],[76,92],[77,79],[77,92],[64,80],[54,90],[30,82],[10,91]];
+const MC2=mod(MC1,{7:[30,82],8:[10,91],9:[64,80],10:[54,90]});
+const Q1=[[50,16],[50,26],[50,52],[46,39],[42,53],[60,32],[70,35],[50,72],[42,54],[50,72],[50,92]];
+const Q2=mod(Q1,{4:[41,51],8:[41,51]});
+const HS1=[[41,53],[38,63],[30,88],[48,70],[58,78],[49,70],[59,78],[50,89],[70,89],[50,90],[70,90]];
+const HS2=mod(HS1,{0:[60,69],1:[52,74],3:[62,80],4:[70,86],5:[63,80],6:[71,86]});
+const HF1=[[46,38],[46,48],[46,74],[54,58],[62,68],[55,58],[63,68],[66,72],[66,92],[38,91],[20,91]];
+const HF2=[[50,40],[50,50],[50,76],[57,60],[64,69],[58,60],[65,69],[68,72],[66,92],[38,91],[20,91]];
+const F1=[[16,86],[24,88],[48,88],[38,80],[52,78],[39,80],[53,78],[66,82],[57,70],[58,70],[66,90]];
+const F2=[[16,86],[24,88],[48,88],[37,79],[50,76],[38,79],[51,76],[64,80],[55,68],[56,68],[64,84]];
+const CH1=[[52,16],[52,26],[51,52],[40,27],[27,26],[54,39],[56,51],[52,72],[51,92],[51,72],[50,92]];
+const CH2=mod(CH1,{0:[55,17],1:[54,27],3:[42,28],5:[57,40],6:[60,51]});
+const CP1=[[70,85],[62,82],[36,84],[74,89],[88,89],[75,90],[89,90],[54,90],[36,91],[55,90],[37,91]];
+const CP2=mod(CP1,{1:[62,81],2:[37,82]});
+
+/* ========== ข้อมูลท่า ========== */
+const MV={
+ march:{n:'March in Place',th:'ย่ำเท้าอยู่กับที่',mus:'อบอุ่นทั้งตัว',per:1400,hl:'legA1 legB1',poses:[MA,ST,MB,ST],
+  how:['ยืนตรง ยกเข่าสลับซ้าย–ขวาเป็นจังหวะ','แกว่งแขนสลับกับขา','วางเท้าเบาๆ ไม่กระโดด ไม่รบกวนห้องข้างล่าง'],easy:'ยกเข่าต่ำลงและช้าลง',hard:'ยกเข่าสูงระดับสะโพกและเร็วขึ้น'},
+ march2:{n:'High Knee March',th:'ย่ำเท้ายกเข่าสูง',mus:'หัวใจ · ต้นขา',per:1000,hl:'legA1 legB1',poses:[MA,ST,MB,ST],
+  how:['ยกเข่าสูงระดับสะโพกสลับเร็วๆ','แกว่งแขนแรงๆ ช่วยเพิ่มจังหวะ','ไม่กระโดด วางเท้าเบาๆ'],easy:'ย่ำช้าลง ยกเข่าต่ำลง',hard:'เร็วขึ้น หรือทำ 40 วิ พัก 20 วิ'},
+ walk:{n:'Slow Walk',th:'เดินช้าๆ หายใจลึก',mus:'ผ่อนคลาย',per:1800,hl:'',poses:[WA,WB],
+  how:['เดินช้าๆ รอบห้องหรืออยู่กับที่','หายใจเข้าทางจมูก ออกทางปากยาวๆ','ให้หัวใจค่อยๆ เต้นช้าลง'],easy:'ยืนหายใจลึกๆ อยู่กับที่',hard:'–'},
+ armcircle:{n:'Arm Circles',th:'หมุนแขนเป็นวงกลม',mus:'ไหล่ · อก',per:1800,hl:'armA1 armA2 armB1 armB2',poses:[K1,K2,K3,K2],
+  how:['ยืนตรง กางแขนออกข้าง','หมุนเป็นวงกลมไปข้างหน้า 10 ครั้ง','แล้วหมุนถอยหลังอีก 10 ครั้ง'],easy:'หมุนวงเล็ก',hard:'หมุนวงใหญ่และช้าลง'},
+ hipcircle:{n:'Hip Circles',th:'หมุนสะโพก',mus:'สะโพก · หลังล่าง',per:2000,hl:'torso',poses:[H1,H2],
+  how:['ยืนแยกเท้าเท่าไหล่ มือเท้าเอว','หมุนสะโพกเป็นวงกลมช้าๆ','ทวนเข็ม 10 ครั้ง ตามเข็ม 10 ครั้ง'],easy:'หมุนวงเล็กลง',hard:'หมุนวงกว้างขึ้น'},
+ catcow:{n:'Cat–Cow',th:'โก่งหลัง–แอ่นหลัง',mus:'หลัง · กระดูกสันหลัง',per:3200,hl:'torso',poses:[mod(QD,{0:[75,72],11:[54,56]}),mod(QD,{0:[78,57],11:[54,74]})],
+  how:['คุกเข่าบนเสื่อ มือใต้ไหล่ เข่าใต้สะโพก','หายใจออก โก่งหลังขึ้น ก้มหน้า (Cat)','หายใจเข้า แอ่นหลังลง เงยหน้า (Cow)'],easy:'ขยับเป็นช่วงสั้นๆ',hard:'ค้างแต่ละท่า 3 วินาที'},
+ legswing:{n:'Leg Swings',th:'แกว่งขาหน้า–หลัง',mus:'สะโพก · ต้นขา',per:1600,hl:'legA1 legA2',prop:WR,poses:[mod(L0,{7:[60,69],8:[68,86]}),mod(L0,{7:[41,70],8:[33,88]})],
+  how:['ยืนข้างผนัง มือแตะผนังช่วยทรงตัว','แกว่งขาไปหน้าและหลังอย่างผ่อนคลาย','ข้างละ 10 ครั้ง สลับข้างเมื่อได้ยินเสียง'],easy:'แกว่งช่วงสั้นลง',hard:'แกว่งให้กว้างขึ้นโดยลำตัวไม่โยก'},
+ squat:{n:'Bodyweight Squat',th:'สควอทมือเปล่า',mus:'ต้นขา · ก้น',per:2600,hl:'legA1 legB1',poses:[SQ0,SQ1],
+  how:['ยืนเท้ากว้างเท่าสะโพก ยื่นแขนไปข้างหน้า','ส่งก้นไปข้างหลังเหมือนจะนั่ง ลงช้า 2–3 วิ','เข่าชี้ตามปลายเท้า ส้นเท้าติดพื้น แล้วดันตัวขึ้น'],easy:'ลงตื้นๆ แค่ครึ่งทาง',hard:'ลงช้า 4 วิ ค้างล่าง 2 วิ → Split Squat'},
+ kneepush:{n:'Knee Push-up',th:'วิดพื้นวางเข่า',mus:'อก · หลังแขน · ไหล่',per:2600,hl:'torso armA1 armA2 armB1 armB2',poses:[KP1,KP2],
+  how:['วางเข่าบนเสื่อ มือกว้างกว่าไหล่เล็กน้อย','ลำตัวตรงตั้งแต่หัวถึงเข่า เกร็งท้อง','ลงช้า ศอกกางประมาณ 45° แล้วดันขึ้น'],easy:'ดันกับผนัง (Wall Push-up)',hard:'ลงช้า 4 วิ → Push-up เต็มท่า'},
+ bridge:{n:'Glute Bridge',th:'นอนยกสะโพก',mus:'ก้น · ต้นขาหลัง',per:2600,hl:'legA1 legB1',poses:[BR1,BR2],
+  how:['นอนหงาย ชันเข่า เท้าวางราบกับเสื่อ','ดันส้นเท้า ยกสะโพกจนลำตัวเป็นเส้นตรง','บีบก้นค้าง 1–2 วิ ไม่แอ่นหลัง แล้วลงช้าๆ'],easy:'ยกสะโพกไม่ต้องสูงมาก',hard:'ค้าง 3 วิ → ทำทีละขา'},
+ superman:{n:'Superman',th:'นอนคว่ำยกแขนขา',mus:'หลัง · ก้น',per:3000,hl:'torso legA1 legB1',poses:[SU1,SU2],
+  how:['นอนคว่ำ เหยียดแขนไปข้างหน้า','ยกแขน อก และขาขึ้นจากพื้นเล็กน้อย','ค้าง 2 วิ มองพื้น ไม่เงยคอ แล้วลงช้าๆ'],easy:'ยกแค่แขน หรือแค่ขา',hard:'ค้าง 3–5 วิ'},
+ deadbug:{n:'Dead Bug',th:'นอนหงายเหยียดแขนขาสลับ',mus:'แกนกลางลำตัว',per:3000,hl:'torso',poses:[DB1,DB2],
+  how:['นอนหงาย ยกแขนชี้เพดาน งอเข่า 90° ลอยไว้','กดหลังล่างแนบเสื่อตลอดเวลา','เหยียดแขนกับขาฝั่งตรงข้ามช้าๆ แล้วสลับ'],easy:'เหยียดแค่ขา แขนอยู่กับที่',hard:'เหยียดช้าลงและค้าง 2 วิ'},
+ plank:{n:'Plank',th:'แพลงก์ (วางเข่าได้)',mus:'แกนกลางลำตัว',per:3000,hl:'torso',poses:[PL1,PL2],
+  how:['วางศอกใต้ไหล่ ขาเหยียดตรง','บีบก้น เกร็งท้อง ลำตัวเป็นเส้นตรง','ไม่ปล่อยสะโพกตกหรือโด่ง หายใจปกติ'],easy:'วางเข่าบนเสื่อ',hard:'ค้าง 45–60 วิ → แตะไหล่สลับมือ'},
+ revlunge:{n:'Reverse Lunge',th:'ก้าวถอยหลังย่อตัว',mus:'ต้นขา · ก้น',per:2800,hl:'legA1 legB1',poses:[STH,LU],
+  how:['ยืนตรง มือเท้าเอว (แตะผนังได้)','ก้าวถอยหลัง ย่อลงตรงๆ จนเข่าหลังเกือบแตะพื้น','เข่าหน้าอยู่เหนือข้อเท้า ดันกลับยืน แล้วสลับข้าง'],easy:'ย่อตื้นลงและแตะผนัง',hard:'ลงช้า 3 วิ → ลันจ์หน้า–หลังต่อเนื่อง'},
+ goodmorning:{n:'Good Morning',th:'พับสะโพก มือหลังศีรษะ',mus:'ต้นขาหลัง · ก้น',per:3000,hl:'legA1 legB1',poses:[GM1,GM2],
+  how:['ยืนเท้ากว้างเท่าสะโพก มือประสานหลังศีรษะ','งอเข่าเล็กน้อย พับตัวที่สะโพก หลังตรง','ลงจนตึงต้นขาด้านหลัง แล้วบีบก้นยืนขึ้น'],easy:'มือไขว้อก และลงไม่ลึก',hard:'ลงช้า 4 วิ → ทำทีละขา'},
+ downdog:{n:'Downward Dog',th:'ท่าหมาก้มหน้า (ค้าง)',mus:'ไหล่ · หลัง · น่อง',per:3000,hl:'armA1 armA2 legA2 legB2',poses:[DD1,DD2],
+  how:['เริ่มจากคุกเข่า แล้วดันสะโพกขึ้นสูง','เหยียดแขนตรง ดันพื้นออก ศีรษะอยู่ระหว่างแขน','งอเข่าได้ถ้าหลังตึง ค้างไว้ หายใจปกติ'],easy:'งอเข่ามากขึ้น ค้างสั้นลง',hard:'ค้างนานขึ้น หรือยกส้นเท้าสลับ'},
+ birddog:{n:'Bird Dog',th:'คุกเข่ายื่นแขนขาสลับ',mus:'แกนกลาง · หลัง',per:3000,hl:'torso armA1 armA2 legA1 legA2',poses:[QD,BD],
+  how:['คุกเข่าบนเสื่อ มือใต้ไหล่ เข่าใต้สะโพก','เหยียดแขนกับขาฝั่งตรงข้ามให้ขนานพื้น','ค้าง 2 วิ สะโพกไม่บิด แล้วสลับข้าง'],easy:'ยื่นแค่ขา หรือแค่แขน',hard:'ค้าง 5 วิ'},
+ sideplank:{n:'Side Plank (Knee)',th:'แพลงก์ข้างวางเข่า',mus:'เอวด้านข้าง',per:3000,hl:'torso',poses:[SP1,SP2],
+  how:['นอนตะแคง ศอกอยู่ใต้ไหล่ งอเข่า','ยกสะโพกจนลำตัวเป็นเส้นตรง','ค้างไว้ ได้ยินเสียงตู๊ดคู่ให้สลับข้าง'],easy:'ค้างสั้นลง 10 วิ',hard:'เหยียดขาตรง ทำ Side Plank เต็มท่า'},
+ calf:{n:'Calf Raise',th:'เขย่งปลายเท้า',mus:'น่อง',per:1800,hl:'legA2 legB2',poses:[STH,lift(STH,5)],
+  how:['ยืนตรง มือแตะผนังช่วยทรงตัวได้','เขย่งขึ้นให้สุด ค้าง 1 วิ','ลดส้นลงช้าๆ'],easy:'เขย่งไม่สุด',hard:'ทำทีละขา'},
+ crosscrunch:{n:'Standing Cross Crunch',th:'ยืนยกเข่าแตะศอกตรงข้าม',mus:'แกนกลาง · เอว',per:2800,hl:'torso',poses:[X0,X1,X0,X2],
+  how:['ยืนตรง มือประสานหลังศีรษะ','ยกเข่าพร้อมบิดตัว ให้ศอกฝั่งตรงข้ามแตะเข่า','สลับข้างเป็นจังหวะ'],easy:'ไม่ต้องแตะ แค่บิดเข้าหากัน',hard:'เร็วขึ้นแต่ยังควบคุมได้'},
+ climber:{n:'Slow Mountain Climber',th:'แพลงก์ดึงเข่าสลับช้าๆ',mus:'แกนกลาง · ไหล่',per:2000,hl:'torso legA1',poses:[MC1,MC2],
+  how:['ตั้งท่าแพลงก์แขนตรง มืออยู่ใต้ไหล่','ดึงเข่าเข้าหาอกทีละข้างช้าๆ','สะโพกไม่โด่ง ไม่กระโดด'],easy:'วางมือบนขอบเตียงเพื่อลดความหนัก',hard:'เร็วขึ้นแบบไม่กระแทก'},
+ quad:{n:'Quad Stretch',th:'ยืนจับเท้าดึงไปทางก้น',mus:'ต้นขาหน้า',per:4000,hl:'legA1',poses:[Q1,Q2],
+  how:['ยืนตรง แตะผนังช่วยทรงตัวได้','จับข้อเท้า ดึงส้นเท้าเข้าหาก้น','เข่าชิดกัน ค้าง 30 วิ แล้วสลับข้าง'],easy:'ใช้ผ้าขนหนูคล้องเท้าช่วย',hard:'–'},
+ hamstring:{n:'Seated Hamstring',th:'นั่งเหยียดขาโน้มตัว',mus:'ต้นขาหลัง',per:4000,hl:'legA1 legB1',poses:[HS1,HS2],
+  how:['นั่งบนเสื่อ เหยียดขาตรง','หลังตรง โน้มตัวไปข้างหน้าจากสะโพก','ค้าง 30 วิ ไม่เด้ง'],easy:'งอเข่าเล็กน้อย',hard:'–'},
+ hipflexor:{n:'Kneeling Hip Flexor',th:'ลันจ์คุกเข่าดันสะโพก',mus:'สะโพกด้านหน้า',per:4000,hl:'legB1',poses:[HF1,HF2],
+  how:['คุกเข่าข้างหนึ่งบนเสื่อ อีกขาก้าวไปข้างหน้า','บีบก้น ดันสะโพกไปข้างหน้าเบาๆ','ค้าง 30 วิ แล้วสลับข้าง'],easy:'ดันสะโพกน้อยลง',hard:'–'},
+ fig4:{n:'Figure-4 Stretch',th:'นอนไขว่ห้างเลข 4',mus:'ก้น · สะโพก',per:4000,hl:'legA1',poses:[F1,F2],
+  how:['นอนหงาย วางข้อเท้าบนเข่าอีกข้าง','สอดมือจับหลังต้นขา ดึงเข้าหาอก','ค้าง 30 วิ แล้วสลับข้าง'],easy:'วางเท้าข้างล่างไว้กับพื้น',hard:'–'},
+ chest:{n:'Wall Chest Stretch',th:'มือแตะผนัง หมุนตัวออก',mus:'อก · ไหล่',per:4000,hl:'armA1 torso',prop:WL,poses:[CH1,CH2],
+  how:['ยืนข้างผนัง วางฝ่ามือบนผนังระดับไหล่','ค่อยๆ หมุนตัวออกจากผนัง','ค้าง 30 วิ แล้วสลับข้าง'],easy:'หมุนตัวน้อยลง',hard:'–'},
+ child:{n:"Child's Pose",th:'ท่าเด็ก',mus:'หลัง · ไหล่',per:4000,hl:'torso',poses:[CP1,CP2],
+  how:['นั่งบนส้นเท้า เข่ากว้างเล็กน้อย','โน้มตัวลง ยื่นแขนไปข้างหน้า หน้าผากแตะเสื่อ','หายใจลึกๆ ค้าง 30 วิ'],easy:'วางหมอนไว้ใต้อก',hard:'–'}
+};
+for(const k in MV)MV[k].poses=MV[k].poses.map(p=>p.length===11?[...p,[(p[1][0]+p[2][0])/2,(p[1][1]+p[2][1])/2]]:p);
+
+/* ========== โปรแกรม ========== */
+const DAYS={
+ A:{name:'วัน A · ฝึกทั้งตัว',time:'⏱ ประมาณ 35–40 นาที · 6 ท่า',list:[
+  {m:'squat',sets:3,reps:'10–12'},{m:'kneepush',sets:3,reps:'6–10'},{m:'bridge',sets:3,reps:'12–15'},
+  {m:'superman',sets:3,reps:'10'},{m:'deadbug',sets:3,reps:'6–8',unit:'ต่อข้าง'},{m:'plank',sets:3,reps:'20–30 วิ',hold:20}]},
+ B:{name:'วัน B · ฝึกทั้งตัว',time:'⏱ ประมาณ 35–40 นาที · 7 ท่า',list:[
+  {m:'revlunge',sets:3,reps:'8',unit:'ต่อข้าง'},{m:'goodmorning',sets:3,reps:'10–12'},{m:'kneepush',sets:3,reps:'6–10'},
+  {m:'downdog',sets:3,reps:'20–30 วิ',hold:20},{m:'birddog',sets:3,reps:'6–8',unit:'ต่อข้าง'},
+  {m:'sideplank',sets:3,reps:'15–20 วิ',unit:'ต่อข้าง',hold:15,sides:1},{m:'calf',sets:2,reps:'15–20'}]},
+ C:{name:'วัน C · เซอร์กิต (ทำหรือไม่ทำก็ได้)',time:'⏱ ประมาณ 20–25 นาที · ไม่มีท่ากระโดด',list:['squat','march2','kneepush','crosscrunch','bridge','climber']}
+};
+const warmItems=t=>[{m:'march',sec:120,l:'2 นาที'},{m:'armcircle',sec:40,l:'10 ครั้ง/ทิศ'},{m:'hipcircle',sec:40,l:'10 ครั้ง/ทิศ'},
+ {m:'catcow',sec:40,l:'8 ครั้ง'},{m:'legswing',sec:60,sides:1,l:'10 ครั้ง/ข้าง'},{m:t==='B'?'revlunge':'squat',sec:40,l:'ซ้อมเบาๆ 8 ครั้ง'}];
+const COOL=[{m:'walk',sec:90,l:'1–2 นาที'},{m:'quad',sec:60,sides:1,l:'30 วิ/ข้าง'},{m:'hamstring',sec:30,l:'30 วิ'},
+ {m:'hipflexor',sec:60,sides:1,l:'30 วิ/ข้าง'},{m:'fig4',sec:60,sides:1,l:'30 วิ/ข้าง'},{m:'chest',sec:60,sides:1,l:'30 วิ/ข้าง'},{m:'child',sec:30,l:'30 วิ'}];
+const WEEK=['A','walk','B','walk','A','C','rest'];
+const SHORT=['จ','อ','พ','พฤ','ศ','ส','อา'],FULL=['จันทร์','อังคาร','พุธ','พฤหัสบดี','ศุกร์','เสาร์','อาทิตย์'];
+const LABEL={A:'A',B:'B',C:'C',walk:'เดิน',rest:'พัก'};
+
+/* ========== ตั้งค่า & วันที่ ========== */
+const S=Object.assign({restSet:60,restBig:120,rounds:2,sound:true,alt:false},JSON.parse(localStorage.getItem('cfg')||'{}'));
+const save=()=>localStorage.setItem('cfg',JSON.stringify(S));
+const LIM={restSet:[30,120],restBig:[60,180],rounds:[2,3]};
+const TODAY=new Date();TODAY.setHours(0,0,0,0);
+const MON=new Date(TODAY);MON.setDate(TODAY.getDate()-((TODAY.getDay()+6)%7));
+const dateOf=i=>{const d=new Date(MON);d.setDate(MON.getDate()+i);return d;};
+const iso=d=>`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+let sel=(TODAY.getDay()+6)%7;
+const typeOf=i=>{const t=WEEK[i];return S.alt&&(t==='A'||t==='B')?(t==='A'?'B':'A'):t;};
+const pk=()=>'p-'+iso(dateOf(sel));
+const getProg=()=>JSON.parse(localStorage.getItem(pk())||'[]');
+const setProg=a=>localStorage.setItem(pk(),JSON.stringify(a));
+const isDone=i=>!!localStorage.getItem('d-'+iso(dateOf(i)));
+const markDone=()=>localStorage.setItem('d-'+iso(dateOf(sel)),'1');
+const unDone=()=>localStorage.removeItem('d-'+iso(dateOf(sel)));
+
+/* ========== หุ่นเคลื่อนไหว ========== */
+const SEG=[['armB1',1,5,5],['armB2',5,6,5],['legB1',2,9,7],['legB2',9,10,6],['torso',1,11,9],['torso',11,2,9],['legA1',2,7,7],['legA2',7,8,6],['armA1',1,3,5],['armA2',3,4,5]];
+const figs=[];
+function mount(box,key){
+  const m=MV[key],hl=(m.hl||'').split(' ');
+  let s='<svg viewBox="0 0 100 100"><line x1="3" y1="94.5" x2="97" y2="94.5" stroke="#dfe5ec" stroke-width="2" stroke-linecap="round"/>'+(m.prop||'')+'<g>';
+  for(const g of SEG){const far=g[0].includes('B'),on=hl.includes(g[0]);
+    s+=`<line stroke="${on?(far?'#fbc65a':'#f59e0b'):(far?'#7d8a9c':'#2c3a4b')}" stroke-width="${g[3]}" stroke-linecap="round"/>`;}
+  s+='<circle r="6.5" fill="#2c3a4b"/></g></svg>';
+  box.innerHTML=s;
+  const g=box.querySelector('g');
+  figs.push({svg:box.firstChild,ls:[...g.querySelectorAll('line')],hd:g.querySelector('circle'),m,inOv:!!box.closest('#ov')});
+}
+const mountAll=r=>r.querySelectorAll('[data-fig]').forEach(b=>mount(b,b.dataset.fig));
+function frame(now){
+  const ovOpen=!$('ov').classList.contains('hidden');
+  for(let i=figs.length-1;i>=0;i--){
+    const f=figs[i];
+    if(!f.svg.isConnected){figs.splice(i,1);continue;}
+    if((ovOpen&&!f.inOv)||f.svg.closest('.hidden'))continue;
+    const ps=f.m.poses,n=ps.length,x=(now/f.m.per)%1*n,k=Math.floor(x),t=(1-Math.cos(Math.PI*(x-k)))/2,A=ps[k],B=ps[(k+1)%n];
+    const p=A.map((a,j)=>[a[0]+(B[j][0]-a[0])*t,a[1]+(B[j][1]-a[1])*t]);
+    SEG.forEach((g,j)=>{const l=f.ls[j],a=p[g[1]],b=p[g[2]];
+      l.setAttribute('x1',a[0]);l.setAttribute('y1',a[1]);l.setAttribute('x2',b[0]);l.setAttribute('y2',b[1]);});
+    f.hd.setAttribute('cx',p[0][0]);f.hd.setAttribute('cy',p[0][1]);
+  }
+  requestAnimationFrame(frame);
+}
+
+/* ========== เสียง ========== */
+let ac;
+function unlock(){try{ac=ac||new (window.AudioContext||window.webkitAudioContext)();if(ac.state==='suspended')ac.resume();}catch(e){}}
+document.addEventListener('pointerdown',unlock);
+function beep(f=880,d=.16,v=.5){
+  if(!S.sound||!ac)return;
+  const o=ac.createOscillator(),g=ac.createGain(),t=ac.currentTime;
+  o.type='square';o.frequency.value=f;
+  g.gain.setValueAtTime(v,t);g.gain.exponentialRampToValueAtTime(.001,t+d);
+  o.connect(g);g.connect(ac.destination);o.start(t);o.stop(t+d+.02);
+  if(navigator.vibrate)navigator.vibrate(d>.3?300:50);
+}
+const fanfare=()=>[660,880,1100,1320].forEach((f,i)=>setTimeout(()=>beep(f,.25),i*180));
+
+/* ========== ตัวจับเวลา ========== */
+let seq=null,T=null,tid=null,wake=null;
+function stopTimer(){clearInterval(tid);tid=null;T=null;}
+async function keepAwake(){try{wake=await navigator.wakeLock?.request('screen');}catch(e){}}
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'&&seq)keepAwake();});
+function countdown(sec,o){
+  stopTimer();
+  const t=T={end:Date.now()+sec*1000,last:-1,total:sec,half:o.sides?Math.floor(sec/2):-1};
+  const loop=()=>{
+    const rem=Math.max(0,Math.ceil((t.end-Date.now())/1000));
+    if(rem!==t.last){
+      t.last=rem;
+      if(rem>0&&rem<=o.beepFrom)beep(rem<=3?1320:880);            // ตู๊ดทุกวินาทีช่วงท้าย
+      else if(rem===t.half){beep(660,.15);setTimeout(()=>beep(660,.15),220);} // ตู๊ดคู่ = สลับข้าง
+      o.onTick(rem,t);
+    }
+    if(rem<=0){stopTimer();beep(1320,.6);o.onEnd();}
+  };
+  tid=setInterval(loop,100);loop();
+}
+function runSeq(steps,onFin){unlock();seq={steps,i:0,onFin};$('ov').classList.remove('hidden');keepAwake();playStep();}
+function playStep(){
+  stopTimer();
+  const s=seq.steps[seq.i],m=MV[s.m],rest=s.kind==='rest';
+  $('ov').className='ov'+(rest?' rest':'')+(s.big?' big':'');
+  $('ovB').textContent=s.badge;$('ovQ').textContent=s.q||'';
+  $('ovCap').textContent=rest?'ท่าต่อไป':'';
+  mount($('ovFig'),s.m);
+  $('ovT').textContent=m.n;$('ovS').textContent=m.th+(s.sub?' · '+s.sub:'');
+  const timed=!!s.sec;
+  $('ovRing').classList.toggle('hidden',!timed);$('bT').classList.toggle('hidden',!timed);
+  $('ovR').classList.toggle('hidden',timed);$('bD').classList.toggle('hidden',timed);
+  if(!timed){$('ovR').textContent=s.reps;$('ovM').textContent=m.how[0];return;}
+  countdown(s.sec,{beepFrom:s.beepFrom??(rest?10:3),sides:s.sides,
+    onTick:(r,t)=>{
+      $('ovN').textContent=r;$('rb').style.strokeDashoffset=CIRC*(1-r/t.total);
+      const warn=rest&&r<=10&&r>0;$('ov').classList.toggle('warn',warn);
+      $('ovM').textContent=rest?(warn?'⚡ เตรียมพร้อม! ใกล้เริ่มแล้ว':'หายใจลึกๆ จิบน้ำ')
+        :(s.sides?(r<=t.half?'🔄 สลับเป็นอีกข้าง':'ข้างแรก'):m.how[1]);
+    },onEnd:nextStep});
+}
+function nextStep(){if(!seq)return;seq.i++;if(seq.i>=seq.steps.length){const f=seq.onFin;closeOv();f&&f();}else playStep();}
+function closeOv(){stopTimer();seq=null;$('ov').className='ov hidden';if(wake&&wake.release)wake.release();wake=null;}
+function guided(items,badge,onFin){
+  const st=[];
+  items.forEach((w,j)=>{
+    const q=`${badge} ${j+1}/${items.length}`;
+    st.push({kind:'rest',m:w.m,sec:5,beepFrom:3,badge:j?'เตรียมท่าต่อไป':'เตรียมตัว',sub:w.l,q});
+    st.push({kind:'work',m:w.m,sec:w.sec,sides:w.sides,badge,sub:w.l,q});
+  });
+  runSeq(st,onFin);
+}
+function circuit(){
+  const L=DAYS.C.list,R=S.rounds,st=[{kind:'rest',m:L[0],sec:10,badge:'เตรียมตัว',sub:'เริ่มรอบที่ 1'}];
+  for(let r=1;r<=R;r++)L.forEach((m,j)=>{
+    st.push({kind:'work',m,sec:30,badge:`รอบ ${r}/${R}`,sub:'ทำต่อเนื่อง 30 วิ',q:`ท่า ${j+1}/${L.length}`});
+    if(j<L.length-1)st.push({kind:'rest',m:L[j+1],sec:30,badge:'พัก 30 วิ',q:`ท่า ${j+2}/${L.length}`});
+    else if(r<R)st.push({kind:'rest',big:1,m:L[0],sec:S.restBig,badge:`🏆 จบรอบ ${r} · พักใหญ่`,sub:`ต่อไปรอบ ${r+1}/${R}`});
+  });
+  runSeq(st,()=>{markDone();render();showDone(`ทำเซอร์กิตครบ ${R} รอบ เยี่ยมมาก!`,false);});
+}
+
+/* ========== นับเซ็ต ========== */
+function doSet(i){
+  const e=DAYS[typeOf(sel)].list[i],c=(getProg()[i]||0)+1;
+  if(e.hold)runSeq([{kind:'work',m:e.m,sec:e.hold*(e.sides?2:1),sides:e.sides,beepFrom:3,badge:`เซ็ต ${c}/${e.sets}`,sub:e.sides?`ข้างละ ${e.hold} วิ`:`ค้าง ${e.hold} วิ`}],()=>completeSet(i));
+  else completeSet(i);
+}
+function completeSet(i){
+  const D=DAYS[typeOf(sel)],e=D.list[i],p=getProg();
+  p[i]=Math.min((p[i]||0)+1,e.sets);setProg(p);render();
+  if(p[i]<e.sets){
+    runSeq([{kind:'rest',m:e.m,sec:S.restSet,badge:'พักระหว่างเซ็ต',sub:`เซ็ต ${p[i]+1}/${e.sets} · ${e.reps}`,q:`เสร็จแล้ว ${p[i]}/${e.sets} เซ็ต`}],afterRest);return;
+  }
+  const nx=D.list.findIndex((x,j)=>(p[j]||0)<x.sets);
+  if(nx<0){markDone();render();showDone(`${D.name} ครบทุกท่าแล้ว เก่งมาก!`,false);return;}
+  const n=D.list[nx];
+  runSeq([{kind:'rest',big:1,m:n.m,sec:S.restBig,badge:`🏆 ${MV[e.m].n} สำเร็จ!`,sub:`${n.sets} × ${n.reps}`,q:'พักใหญ่ก่อนท่าต่อไป'}],afterRest);
+}
+function afterRest(){render();const a=document.querySelector('.ex.active');if(a)a.scrollIntoView({behavior:'smooth',block:'center'});}
+function checkAllDone(){const D=DAYS[typeOf(sel)],p=getProg();D.list.every((x,j)=>(p[j]||0)>=x.sets)?markDone():unDone();}
+function showDone(t,noCool){$('doneT').textContent=t;$('bCool').classList.toggle('hidden',!!noCool);$('done').classList.remove('hidden');fanfare();}
+
+/* ========== วาดหน้าจอ ========== */
+const miniList=items=>items.map(w=>`<button class="mini" data-act="info" data-m="${w.m}"><div class="fbox" data-fig="${w.m}"></div><b>${MV[w.m].th}</b><small>${w.l}</small></button>`).join('');
+const warmSec=t=>`<section class="sec"><div class="sech"><h3>วอร์มอัพ 6–8 นาที · ทำ 1 รอบ</h3><button class="play" data-act="warm">▶ เริ่ม</button></div><div class="hs">${miniList(warmItems(t))}</div><p class="hint">กดที่ท่าเพื่อดูภาพเคลื่อนไหวและวิธีทำ · กด ▶ เริ่ม ให้แอปจับเวลาให้</p></section>`;
+const coolSec=title=>`<section class="sec"><div class="sech"><h3>${title}</h3><button class="play" data-act="cool">▶ เริ่ม</button></div><div class="hs">${miniList(COOL)}</div><p class="hint">ยืดค้างไว้ ไม่เด้ง · ได้ยินเสียงตู๊ดคู่ให้สลับข้าง</p></section>`;
+function exCard(e,i,p,act){
+  const m=MV[e.m],c=Math.min(p[i]||0,e.sets),done=c>=e.sets;
+  let cir='';for(let k=1;k<=e.sets;k++)cir+=`<button class="cir ${k<=c?'d':(k===c+1&&act?'c':'')}" data-act="cir" data-i="${i}" data-k="${k}">${k<=c?'✓':k}</button>`;
+  const btn=act?`<button class="primary" data-act="doSet" data-i="${i}">${e.hold?`▶ เริ่มจับเวลา ${e.hold*(e.sides?2:1)} วิ${e.sides?' (ข้างละ '+e.hold+')':''}`:`✓ ทำเซ็ตที่ ${c+1} เสร็จ`}</button><button class="skip" data-act="skipEx" data-i="${i}">ข้ามท่านี้</button>`:'';
+  return `<article class="ex ${act?'active':''} ${done?'done':''}">
+    <div class="row1"><div class="thumb"><div class="fbox" data-fig="${e.m}"></div><span class="num">${done?'✓':i+1}</span></div>
+    <div class="info"><b>${m.n}</b><small>${m.th} · ${m.mus}</small><button class="lnk" data-act="info" data-m="${e.m}">▶ ดูท่าตัวอย่าง</button></div>
+    <span class="tgt">${e.sets} × ${e.reps}${e.unit?`<i>${e.unit}</i>`:''}</span></div>
+    <div class="setrow"><div class="circles">${cir}</div><span class="stxt">${done?'สำเร็จ ✓':`ทำเซ็ตที่ ${c+1} จาก ${e.sets}`}</span></div>${btn}</article>`;
+}
+function circSec(){
+  const L=DAYS.C.list,mins=Math.round((S.rounds*330+(S.rounds-1)*S.restBig)/60);
+  return `<section class="ex active"><div class="sech"><h3>เซอร์กิตแรงกระแทกต่ำ</h3><span class="tgt">${S.rounds} รอบ</span></div>
+  <p class="sub" style="margin:0 0 10px">ทำท่าละ 30 วิ · พัก 30 วิ · ครบ 6 ท่า = 1 รอบ · พักระหว่างรอบ ${S.restBig} วิ</p>
+  <div class="seg">${[2,3].map(r=>`<button class="${S.rounds===r?'on':''}" data-act="rounds" data-r="${r}">${r} รอบ</button>`).join('')}</div>
+  <div class="grid3">${miniList(L.map(m=>({m,l:'30 วิ'})))}</div>
+  <button class="primary" data-act="circ">▶ เริ่มเซอร์กิต (~${mins} นาที)</button></section>`;
+}
+function renderTabs(){
+  $('tabs').innerHTML=SHORT.map((s,i)=>`<button class="tab ${i===sel?'on':''} ${dateOf(i).getTime()===TODAY.getTime()?'today':''} ${isDone(i)?'ok':''}" data-act="tab" data-i="${i}"><b>${s}</b><small>${isDone(i)?'✓':LABEL[typeOf(i)]}</small></button>`).join('');
+}
+function render(){
+  renderTabs();
+  const t=typeOf(sel),d=dateOf(sel),M=$('main'),date=`วัน${FULL[sel]} ${d.getDate()}/${d.getMonth()+1}`;
+  if(t==='walk'||t==='rest'){
+    M.innerHTML=`<div class="dayhead"><small>${date}</small><h2>${t==='walk'?'วันพัก · เดินเบาๆ':'วันพักเต็มวัน'}</h2><p>${t==='walk'?'เดิน 20–30 นาที หรือยืดเหยียดเบาๆ':'ให้กล้ามเนื้อฟื้นตัว นอนให้พอ 7–9 ชม.'}</p></div>
+    <div class="card"><div class="em">${t==='walk'?'🚶':'😴'}</div><p>${t==='walk'?'การเดินช่วยเผาผลาญเพิ่มและลดอาการปวดเมื่อย ตั้งเป้า 7,000–10,000 ก้าว/วัน':'วันนี้ไม่ต้องฝึก ดื่มน้ำ กินโปรตีนให้พอ แล้วพรุ่งนี้ค่อยลุยต่อ'}</p></div>`+coolSec('ยืดเหยียดเบาๆ (ทำหรือไม่ทำก็ได้)');
+    mountAll(M);return;
+  }
+  const D=DAYS[t];let h,pct;
+  if(t==='C'){pct=isDone(sel)?100:0;}
+  else{const p=getProg(),tot=D.list.reduce((a,e)=>a+e.sets,0),dn=D.list.reduce((a,e,i)=>a+Math.min(p[i]||0,e.sets),0);pct=dn/tot*100;}
+  h=`<div class="dayhead"><small>${date}</small><h2>${D.name}</h2><p>${D.time}</p><div class="bar"><i style="width:${pct}%"></i></div></div>`+warmSec(t);
+  if(t==='C')h+=circSec();
+  else{const p=getProg(),act=D.list.findIndex((x,j)=>(p[j]||0)<x.sets);h+=D.list.map((e,i)=>exCard(e,i,p,i===act)).join('');}
+  M.innerHTML=h+coolSec('คูลดาวน์ 5–7 นาที');
+  mountAll(M);
+}
+function openInfo(k){
+  const m=MV[k];mount($('iF'),k);
+  $('iN').textContent=m.n;$('iS').textContent=`${m.th} · ${m.mus}`;
+  $('iH').innerHTML=m.how.map(x=>`<li>${x}</li>`).join('');
+  $('iE').textContent=m.easy;$('iX').textContent=m.hard;
+  $('info').classList.remove('hidden');
+}
+function syncSet(){
+  $('v-restSet').textContent=S.restSet+' วิ';$('v-restBig').textContent=S.restBig+' วิ';$('v-rounds').textContent=S.rounds+' รอบ';
+  $('cSound').checked=S.sound;$('cAlt').checked=S.alt;
+}
+
+/* ========== ปุ่มต่างๆ ========== */
+document.addEventListener('click',ev=>{
+  if(ev.target.classList.contains('sheet')){ev.target.classList.add('hidden');return;}
+  const el=ev.target.closest('[data-act]');if(!el)return;
+  const a=el.dataset.act,i=+el.dataset.i;
+  switch(a){
+    case 'tab':sel=i;render();window.scrollTo(0,0);break;
+    case 'info':openInfo(el.dataset.m);break;
+    case 'closeInfo':$('info').classList.add('hidden');break;
+    case 'warm':guided(warmItems(typeOf(sel)),'วอร์มอัพ',afterRest);break;
+    case 'cool':guided(COOL,'คูลดาวน์',()=>showDone('คูลดาวน์เสร็จแล้ว พักผ่อนและดื่มน้ำ 💧',true));break;
+    case 'coolFromDone':$('done').classList.add('hidden');guided(COOL,'คูลดาวน์',()=>showDone('คูลดาวน์เสร็จแล้ว พักผ่อนและดื่มน้ำ 💧',true));break;
+    case 'closeDone':$('done').classList.add('hidden');render();break;
+    case 'doSet':doSet(i);break;
+    case 'cir':{const p=getProg(),k=+el.dataset.k;p[i]=(p[i]||0)===k?k-1:k;setProg(p);checkAllDone();render();break;}
+    case 'skipEx':{const p=getProg();p[i]=DAYS[typeOf(sel)].list[i].sets;setProg(p);checkAllDone();render();break;}
+    case 'circ':circuit();break;
+    case 'rounds':S.rounds=+el.dataset.r;save();render();break;
+    case 'plus':if(T){T.end+=10000;T.total+=10;}break;
+    case 'skipStep':stopTimer();nextStep();break;
+    case 'closeOv':closeOv();afterRest();break;
+    case 'openSet':syncSet();$('set').classList.remove('hidden');break;
+    case 'closeSet':$('set').classList.add('hidden');render();break;
+    case 'step':{const k=el.dataset.k,[lo,hi]=LIM[k];S[k]=Math.max(lo,Math.min(hi,S[k]+ +el.dataset.d));save();syncSet();break;}
+    case 'testSound':unlock();for(let j=0;j<4;j++)setTimeout(()=>beep(j>=1?1320:880),j*1000);setTimeout(()=>beep(1320,.6),4000);break;
+    case 'resetWeek':if(confirm('ล้างความคืบหน้าทั้งสัปดาห์นี้?')){for(let j=0;j<7;j++){const d=iso(dateOf(j));localStorage.removeItem('p-'+d);localStorage.removeItem('d-'+d);}render();}break;
+  }
+});
+$('cSound').onchange=e=>{S.sound=e.target.checked;save();};
+$('cAlt').onchange=e=>{S.alt=e.target.checked;save();render();};
+
+render();
+requestAnimationFrame(frame);
+</script>
+</body>
+</html>
