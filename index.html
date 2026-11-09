@@ -610,5 +610,249 @@ $('cAlt').onchange=e=>{S.alt=e.target.checked;save();render();};
 render();
 requestAnimationFrame(frame);
 </script>
+  <!-- ===== FitWeeks Add-on: แผนถึงเมษา + โภชนาการ + น้ำหนัก ===== -->
+<style>
+.nut{border:1.5px solid var(--line);border-radius:20px;padding:14px;display:flex;flex-direction:column;gap:10px}
+.nut h3{margin:4px 0 0;font-size:17px}
+.kp{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.kp div{background:var(--blue);border-radius:14px;padding:8px;text-align:center}
+.kp b{display:block;font-size:19px;color:#1d3b6a}.kp small{font-size:11px;color:var(--sub)}
+.meter{height:12px;background:#e8edf2;border-radius:8px;overflow:hidden}
+.meter i{display:block;height:100%;background:var(--g);border-radius:8px;transition:width .3s}
+.meter.k i{background:var(--org)}
+.mrow{display:flex;justify-content:space-between;align-items:center;font-size:14px}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chips button{border:1.5px solid var(--line);background:#fff;border-radius:20px;padding:6px 10px;font-size:13px}
+.chips button:active{background:var(--g2)}
+.inrow{display:flex;gap:8px}
+.inrow input,.fgrid input,.fgrid select{flex:1;min-width:0;border:1.5px solid var(--line);border-radius:12px;padding:10px;font:inherit;font-size:15px;background:#fff}
+.inrow button{border:0;background:var(--g);color:#fff;border-radius:12px;padding:0 14px;font-weight:600}
+.fgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.fgrid label{font-size:12px;color:var(--sub);display:flex;flex-direction:column;gap:4px}
+.spark{width:100%;height:70px!important}
+.phase{display:inline-block;background:rgba(255,255,255,.22);border-radius:20px;padding:3px 10px;font-size:12px;margin-top:6px}
+.tl{display:flex;gap:3px;margin-top:8px}
+.tl span{flex:1;height:6px;border-radius:4px;background:rgba(255,255,255,.3)}
+.tl span.p{background:#fff}.tl span.c{background:#ffd166}
+</style>
+<script>
+(function(){
+/* ---------- ท่าใหม่ (เลเวล 2–4) ---------- */
+const fix=p=>p.length===11?[...p,[(p[1][0]+p[2][0])/2,(p[1][1]+p[2][1])/2]]:p;
+const add=(k,o)=>{o.poses=o.poses.map(fix);MV[k]=o;};
+const vari=(k,b,o)=>{const B=MV[b];MV[k]=Object.assign({},B,o,{how:[o.tip,...B.how]});delete MV[k].tip;};
+const SSU=[[49,24],[49,34],[49,60],[43,47],[48,57],[44,47],[49,57],[64,76],[68,92],[40,80],[24,90]];
+const PU1=[[82,58],[74,62],[46,72],[74,78],[74,92],[75,78],[75,92],[26,82],[6,91],[27,82],[7,91]];
+const PU2=[[83,82],[74,84],[46,88],[62,86],[74,92],[63,86],[75,92],[26,90],[6,92],[27,90],[7,92]];
+const SB1=[[15,86],[24,88],[46,89],[34,90],[46,91],[35,90],[47,91],[64,80],[84,76],[59,72],[65,92]];
+const SB2=[[15,86],[24,88],[46,76],[34,90],[46,91],[35,90],[47,91],[66,70],[86,64],[65,72],[65,92]];
+const HP=[[84,63],[76,67],[50,72],[76,79],[76,92],[77,79],[77,92],[30,82],[10,91],[31,82],[11,91]];
+const TAP=mod(HP,{3:[68,76],4:[78,68]});
+const PK2=[[78,86],[70,80],[54,52],[64,88],[80,92],[65,88],[81,92],[44,72],[34,92],[45,72],[35,92]];
+const SLH2=[[78,44],[70,48],[46,56],[72,60],[74,70],[73,60],[75,70],[50,74],[50,92],[30,54],[14,52]];
+const SA2=mod(SU2,{3:[60,82],4:[50,84],5:[60,83],6:[50,85]});
+const SPF1=[[14,70],[22,74],[52,80],[22,90],[34,90],[22,62],[22,50],[73,85],[94,90],[74,85],[95,90]];
+const SPF2=mod(SPF1,{2:[52,77],7:[73,83],9:[74,83]});
+
+add('splitsq',{n:'Split Squat',th:'ย่อขาหน้า–หลังอยู่กับที่',mus:'ต้นขา · ก้น',per:3000,hl:'legA1 legB1',poses:[SSU,LU],
+ how:['ยืนเท้าหน้า–หลังห่างประมาณ 1 ก้าวยาว มือเท้าเอว','ย่อลงตรงๆ จนเข่าหลังเกือบแตะเสื่อ','ดันส้นเท้าหน้าขึ้น ทำครบข้างหนึ่งแล้วสลับ'],easy:'ย่อตื้นลง แตะผนังช่วยทรงตัว',hard:'ลงช้า 4 วิ หรือแบบ 1½ ครั้ง'});
+add('pushup',{n:'Push-up',th:'วิดพื้นเต็มท่า',mus:'อก · หลังแขน · ไหล่',per:2800,hl:'torso armA1 armA2 armB1 armB2',poses:[PU1,PU2],
+ how:['มือกว้างกว่าไหล่เล็กน้อย ขาเหยียดตรง (เจ็บข้อมือให้กำหมัดวาง)','ลำตัวตรงจากหัวถึงส้นเท้า เกร็งท้องและก้น','ลงจนอกเกือบแตะเสื่อ ศอก 45° แล้วดันขึ้น'],easy:'หมดแรงกลางเซ็ต ให้วางเข่าทำต่อ',hard:'ลงช้า 4 วิ + ค้างล่าง 1 วิ'});
+vari('negpush','pushup',{n:'Negative Push-up',th:'วิดพื้นเต็มท่า ลงช้า 4 วิ',per:5200,tip:'ลงช้านับ 1–4 ในท่าเต็ม แล้ววางเข่าดันตัวขึ้น',easy:'ลงช้า 2–3 วิ',hard:'เปลี่ยนเป็น Push-up เต็มท่า'});
+add('slbridge',{n:'Single-leg Bridge',th:'ยกสะโพกทีละขา',mus:'ก้น · ต้นขาหลัง',per:2800,hl:'legB1 legB2',poses:[SB1,SB2],
+ how:['นอนหงาย ชันเข่าข้างหนึ่ง อีกขาเหยียดลอยไว้','ดันส้นเท้าที่วางพื้น ยกสะโพกขึ้น','สะโพกไม่เอียง ค้าง 1 วิ ทำครบแล้วสลับข้าง'],easy:'กลับไปทำสองขา ค้าง 3 วิ',hard:'ค้างด้านบน 3 วิทุกครั้ง'});
+add('tap',{n:'Plank Shoulder Tap',th:'แพลงก์แขนตรง แตะไหล่สลับ',mus:'แกนกลาง · ไหล่',per:2400,hl:'torso armA1 armA2',poses:[HP,TAP,HP],
+ how:['ตั้งท่าแพลงก์แขนตรง เท้ากว้างกว่าสะโพก','ยกมือแตะไหล่ฝั่งตรงข้ามช้าๆ','สะโพกนิ่ง ไม่โยก แล้วสลับข้าง'],easy:'วางเข่า หรือแยกเท้ากว้างขึ้น',hard:'เท้าชิดขึ้นและช้าลง'});
+add('pike',{n:'Pike Push-up',th:'วิดพื้นท่าหมาก้มหน้า',mus:'ไหล่ · หลังแขน',per:3000,hl:'armA1 armA2 armB1 armB2',poses:[DD1,PK2],
+ how:['เริ่มจากท่าหมาก้มหน้า สะโพกสูง','งอศอก ลดศีรษะลงไปข้างหน้ามือ','ดันกลับขึ้น งอเข่าได้ถ้าหลังตึง'],easy:'กลับไปค้าง Downward Dog',hard:'เดินเท้าเข้าใกล้มือมากขึ้น'});
+add('slhinge',{n:'Single-leg Hip Hinge',th:'พับสะโพกยืนขาเดียว',mus:'ต้นขาหลัง · ก้น · การทรงตัว',per:3400,hl:'legA1 legB1',poses:[STH,SLH2],
+ how:['ยืนขาเดียว เข่างอเล็กน้อย แตะผนังได้','พับตัวไปข้างหน้า ยื่นขาอีกข้างไปข้างหลัง','หลังตรง สะโพกไม่บิด แล้วบีบก้นยืนขึ้น'],easy:'ปลายเท้าหลังแตะพื้นไว้',hard:'ลงช้า 4 วิ'});
+add('angel',{n:'Reverse Snow Angel',th:'นอนคว่ำ กวาดแขน',mus:'หลังบน · ไหล่',per:3600,hl:'armA1 armA2 armB1 armB2 torso',poses:[SU2,SA2],
+ how:['นอนคว่ำ ยกอกและแขนลอยจากพื้นเล็กน้อย','กวาดแขนจากเหนือศีรษะลงมาข้างลำตัวช้าๆ','บีบสะบัก แล้วกวาดกลับ แขนไม่แตะพื้น'],easy:'ไม่ต้องยกอก ยกแค่แขน',hard:'ค้างจุดปลาย 2 วิ'});
+add('sidefull',{n:'Side Plank',th:'แพลงก์ข้างขาเหยียด',mus:'เอวด้านข้าง',per:3000,hl:'torso',poses:[SPF1,SPF2],
+ how:['นอนตะแคง ศอกใต้ไหล่ ขาเหยียดซ้อนกัน','ยกสะโพกจนตัวเป็นเส้นตรง','ค้างไว้ ได้ยินตู๊ดคู่ให้สลับข้าง'],easy:'วางเข่าล่าง',hard:'ยกขาบนขึ้นค้าง'});
+vari('tsquat','squat',{n:'Tempo Squat',th:'สควอทลงช้า 3 วิ ค้าง 1 วิ',per:4500,tip:'ลงช้านับ 1–2–3 ค้างล่าง 1 วิ แล้วขึ้นปกติ'});
+vari('tkpush','kneepush',{n:'Tempo Knee Push-up',th:'วิดพื้นวางเข่า ลงช้า 3 วิ',per:4200,tip:'ลงช้านับ 1–2–3 แล้วดันขึ้นปกติ'});
+vari('hbridge','bridge',{n:'Bridge + Hold',th:'ยกสะโพกค้าง 3 วิ',per:4500,tip:'ยกขึ้นแล้วบีบก้นค้าง 3 วิทุกครั้ง'});
+vari('supHold','superman',{n:'Superman Hold',th:'นอนคว่ำยกแขนขา ค้าง 3 วิ',per:4500,tip:'ยกขึ้นแล้วค้าง 3 วิทุกครั้ง'});
+vari('slowbug','deadbug',{n:'Slow Dead Bug',th:'เหยียดช้า ค้างปลาย 2 วิ',per:4800,tip:'เหยียดช้านับ 1–3 ค้าง 2 วิ หลังล่างแนบเสื่อ'});
+vari('lunge2','revlunge',{n:'Slow Reverse Lunge',th:'ลันจ์ถอยหลัง ลงช้า 3 วิ',per:4200,tip:'ลงช้านับ 1–2–3 แล้วดันกลับ'});
+vari('bdhold','birddog',{n:'Bird Dog Hold',th:'ยื่นแขนขาค้าง 5 วิ',per:5000,tip:'ยื่นแล้วค้าง 5 วิทุกครั้ง'});
+vari('slcalf','calf',{n:'Single-leg Calf Raise',th:'เขย่งทีละขา',per:2200,tip:'ยืนขาเดียว แตะผนังช่วยทรงตัว'});
+
+/* ---------- โปรแกรม 4 เลเวล ---------- */
+const E=(m,sets,reps,x)=>Object.assign({m,sets,reps},x||{});
+const U={unit:'ต่อข้าง'};
+const LV={
+ A:[[E('squat',3,'10–12'),E('kneepush',3,'6–10'),E('bridge',3,'12–15'),E('superman',3,'10'),E('deadbug',3,'6–8',U),E('plank',3,'20–30 วิ',{hold:20})],
+    [E('tsquat',4,'10–12'),E('tkpush',4,'8–12'),E('hbridge',4,'12'),E('supHold',3,'10'),E('slowbug',3,'8',U),E('plank',3,'30–40 วิ',{hold:30})],
+    [E('splitsq',3,'8–10',U),E('negpush',4,'5–6'),E('slbridge',3,'8–10',U),E('angel',3,'10–12'),E('slowbug',3,'10',U),E('tap',3,'8–10',U)],
+    [E('splitsq',4,'10–12',U),E('pushup',4,'5–10'),E('slbridge',4,'10–12',U),E('angel',4,'12'),E('tap',3,'12',U),E('plank',3,'45–60 วิ',{hold:45})]],
+ B:[[E('revlunge',3,'8',U),E('goodmorning',3,'10–12'),E('kneepush',3,'6–10'),E('downdog',3,'20–30 วิ',{hold:20}),E('birddog',3,'6–8',U),E('sideplank',3,'15–20 วิ',{unit:'ต่อข้าง',hold:15,sides:1}),E('calf',2,'15–20')],
+    [E('revlunge',4,'10',U),E('goodmorning',4,'12–15'),E('tkpush',3,'8–12'),E('downdog',3,'30–40 วิ',{hold:30}),E('bdhold',3,'6',U),E('sideplank',3,'25 วิ',{unit:'ต่อข้าง',hold:25,sides:1}),E('calf',3,'20')],
+    [E('lunge2',4,'8–10',U),E('slhinge',3,'8–10',U),E('pike',3,'6–8'),E('tkpush',3,'12'),E('bdhold',3,'8',U),E('sidefull',3,'15–20 วิ',{unit:'ต่อข้าง',hold:15,sides:1}),E('slcalf',3,'12',U)],
+    [E('lunge2',4,'10–12',U),E('slhinge',4,'10–12',U),E('pike',4,'8–10'),E('negpush',3,'6–8'),E('bdhold',3,'10',U),E('sidefull',3,'25–30 วิ',{unit:'ต่อข้าง',hold:25,sides:1}),E('slcalf',3,'15',U)]]
+};
+const CL=[{list:['squat','march2','kneepush','crosscrunch','bridge','climber'],r:2,w:30,rest:30},
+ {list:['squat','march2','kneepush','crosscrunch','bridge','climber'],r:3,w:30,rest:30},
+ {list:['tsquat','march2','tkpush','crosscrunch','hbridge','climber'],r:3,w:40,rest:20},
+ {list:['splitsq','march2','negpush','crosscrunch','slbridge','tap'],r:3,w:40,rest:20}];
+const PH=[{a:1,b:4,lv:1,t:'ปูพื้นฐาน'},{a:5,b:8,lv:2,t:'เพิ่มปริมาณ'},{a:9,b:9,lv:2,dl:1,t:'Deload ฟื้นตัว'},
+ {a:10,b:13,lv:3,t:'ท่าขาเดียว / ยากขึ้น'},{a:14,b:17,lv:4,t:'อัพเลเวลสูงสุด'},{a:18,b:18,lv:4,dl:1,t:'Deload ฟื้นตัว'},{a:19,b:99,lv:4,t:'ช่วงพีค + ทดสอบ'}];
+const GOAL=new Date('2027-04-01T00:00:00');
+if(!localStorage.getItem('planStart'))localStorage.setItem('planStart',iso(MON));
+let START=new Date(localStorage.getItem('planStart')+'T00:00:00');
+const weekNo=d=>Math.max(1,Math.floor((d-START)/864e5/7)+1);
+function cur(){const w=weekNo(dateOf(sel)),p=Object.assign({w},PH.find(x=>w>=x.a&&w<=x.b));if(S.lvl){p.lv=S.lvl;p.dl=0;}return p;}
+function applyLevel(){
+  const p=cur();
+  ['A','B'].forEach(k=>{
+    DAYS[k].list=LV[k][p.lv-1].map(e=>Object.assign({},e,p.dl?{sets:Math.max(2,Math.ceil(e.sets/2))}:{}));
+    DAYS[k].name=`วัน ${k} · ${k==='A'?'ขา–ก้น + ดัน + แกนกลาง':'ลันจ์–สะโพก + ไหล่ + แกนกลาง'}`;
+    DAYS[k].time=`⏱ ประมาณ 45–60 นาที · ${DAYS[k].list.length} ท่า · เลเวล ${p.lv}${p.dl?' (Deload)':''}`;
+  });
+  const c=CL[p.lv-1];DAYS.C.list=c.list;DAYS.C.cfg=p.dl?Object.assign({},c,{r:2}):c;
+  DAYS.C.time=`⏱ ประมาณ 20–30 นาที · ${c.w}/${c.rest} วิ · ไม่มีท่ากระโดด`;
+  return p;
+}
+LABEL.walk='แอโรบิก';
+
+circuit=function(){
+  const c=DAYS.C.cfg,L=c.list,R=c.r,st=[{kind:'rest',m:L[0],sec:10,badge:'เตรียมตัว',sub:'เริ่มรอบที่ 1'}];
+  for(let r=1;r<=R;r++)L.forEach((m,j)=>{
+    st.push({kind:'work',m,sec:c.w,badge:`รอบ ${r}/${R}`,sub:`ทำต่อเนื่อง ${c.w} วิ`,q:`ท่า ${j+1}/${L.length}`});
+    if(j<L.length-1)st.push({kind:'rest',m:L[j+1],sec:c.rest,badge:`พัก ${c.rest} วิ`,q:`ท่า ${j+2}/${L.length}`});
+    else if(r<R)st.push({kind:'rest',big:1,m:L[0],sec:S.restBig,badge:`🏆 จบรอบ ${r} · พักใหญ่`,sub:`ต่อไปรอบ ${r+1}/${R}`});
+  });
+  runSeq(st,()=>{markDone();render();showDone(`ทำเซอร์กิตครบ ${R} รอบ เยี่ยมมาก!`,false);});
+};
+circSec=function(){
+  const c=DAYS.C.cfg,L=c.list,mins=Math.round((c.r*L.length*(c.w+c.rest)+(c.r-1)*S.restBig)/60);
+  return `<section class="ex active"><div class="sech"><h3>เซอร์กิตแรงกระแทกต่ำ</h3><span class="tgt">${c.r} รอบ</span></div>
+  <p class="sub" style="margin:0 0 10px">ท่าละ ${c.w} วิ · พัก ${c.rest} วิ · ครบ ${L.length} ท่า = 1 รอบ · พักระหว่างรอบ ${S.restBig} วิ</p>
+  <div class="grid3">${miniList(L.map(m=>({m,l:c.w+' วิ'})))}</div>
+  <button class="primary" data-act="circ">▶ เริ่มเซอร์กิต (~${mins} นาที)</button></section>`;
+};
+const _render=render;
+render=function(){
+  const p=applyLevel();_render();
+  const M=$('main'),h=M.querySelector('.dayhead');
+  if(typeOf(sel)==='walk'&&h){
+    h.querySelector('h2').textContent='วันแอโรบิก';
+    h.querySelector('p').textContent='เต้นแอโรบิกแบบ Low-impact 30–45 นาที หรือเดินเร็ว';
+    const em=M.querySelector('.card .em'),cp=M.querySelector('.card p');
+    if(em)em.textContent='💃';
+    if(cp)cp.textContent='คาร์ดิโอช่วยเพิ่มการใช้พลังงาน ส่วนเวทช่วยรักษากล้ามเนื้อ เลือกท่าเต้นที่ไม่กระโดดเพื่อถนอมเข่า';
+  }
+  if(h){
+    let tl='';for(let i=1;i<=21;i++)tl+=`<span class="${i<p.w?'p':i===p.w?'c':''}"></span>`;
+    const left=Math.max(0,Math.ceil((GOAL-TODAY)/864e5));
+    h.insertAdjacentHTML('beforeend',`<span class="phase">สัปดาห์ ${p.w} · เลเวล ${p.lv}${p.dl?' · Deload':''}${S.lvl?' (ล็อก)':' · '+p.t}</span> <span class="phase">อีก ${left} วันถึง 1 เม.ย.</span><div class="tl">${tl}</div>`);
+  }
+};
+
+/* ---------- แผนถึงเมษา ---------- */
+const fd=d=>`${d.getDate()}/${d.getMonth()+1}`;
+function planHtml(){
+  return `<summary>🗓️ แผนถึงเมษายน (21 สัปดาห์)</summary><ul>${PH.map(x=>{
+    const b2=Math.min(x.b,21),a=new Date(START),b=new Date(START);a.setDate(a.getDate()+(x.a-1)*7);b.setDate(b.getDate()+b2*7-1);
+    return `<li><b>สัปดาห์ ${x.a}${b2!==x.a?'–'+b2:''}</b> (${fd(a)}–${fd(b)}) · เลเวล ${x.lv}${x.dl?' Deload':''} · ${x.t}</li>`;}).join('')}
+  <li><b>เลื่อนเลเวลเมื่อ:</b> ทำได้ครบจำนวนสูงสุดทุกเซ็ตด้วยท่าที่ถูกต้อง ถ้ายังไม่ได้ ให้ล็อกเลเวลเดิมในตั้งค่า ⚙️</li>
+  <li><b>แอโรบิก:</b> ถ้าเต้นวันเดียวกับวันเวท ให้เล่นเวทก่อน หรือแยกห่างกันอย่างน้อย 6 ชม.</li></ul>`;
+}
+const pd=document.createElement('details');pd.innerHTML=planHtml();document.querySelector('.app details').before(pd);
+
+/* ---------- ตั้งค่าเพิ่ม ---------- */
+const rr=document.querySelector('#set [data-k="rounds"]');if(rr)rr.closest('.srow').style.display='none';
+document.querySelector('#set [data-act="testSound"]').insertAdjacentHTML('beforebegin',
+ `<div class="srow"><span>เลเวลโปรแกรม</span><select id="cLv" style="border:1.5px solid var(--line);border-radius:10px;padding:6px;font:inherit">
+ <option value="0">อัตโนมัติตามสัปดาห์</option><option value="1">ล็อกเลเวล 1</option><option value="2">ล็อกเลเวล 2</option><option value="3">ล็อกเลเวล 3</option><option value="4">ล็อกเลเวล 4</option></select></div>
+ <div class="srow"><span>วันเริ่มโปรแกรม</span><input type="date" id="cStart" style="width:auto;height:auto;border:1.5px solid var(--line);border-radius:10px;padding:6px;font:inherit"></div>`);
+$('cLv').value=String(S.lvl||0);$('cStart').value=localStorage.getItem('planStart');
+$('cLv').onchange=e=>{S.lvl=+e.target.value;save();render();};
+$('cStart').onchange=e=>{if(!e.target.value)return;localStorage.setItem('planStart',e.target.value);START=new Date(e.target.value+'T00:00:00');pd.innerHTML=planHtml();render();};
+
+/* ---------- โภชนาการ + น้ำหนัก ---------- */
+const J=(k,d)=>{try{const v=JSON.parse(localStorage.getItem(k));return v==null?d:v;}catch(e){return d;}};
+const W=(k,v)=>localStorage.setItem(k,JSON.stringify(v));
+const TK='food-'+iso(TODAY);
+const prof=()=>Object.assign({sex:'m',age:30,h:193,w:117,act:1.5},J('prof',{}));
+const wlog=()=>J('wlog',{});
+const latestW=()=>{const l=wlog(),k=Object.keys(l).sort();return k.length?l[k[k.length-1]]:null;};
+function calc(){
+  const P=prof(),w=latestW()||P.w,bmr=10*w+6.25*P.h-5*P.age+(P.sex==='m'?5:-161),tdee=bmr*P.act;
+  const kcal=Math.round((tdee-Math.min(750,tdee*.2))/50)*50,ref=Math.min(w,25*(P.h/100)**2);
+  const pro=Math.round(ref*1.8/5)*5,fat=Math.round(kcal*.27/9),carb=Math.round((kcal-pro*4-fat*9)/4);
+  return{bmr,tdee,kcal,pro,fat,carb,w,bmi:w/(P.h/100)**2};
+}
+const FOODS=[['ไข่ต้ม 1 ฟอง',6,75],['อกไก่ 100 ก.',31,165],['ทูน่ากระป๋องเล็ก',18,90],['นมจืด 1 กล่อง',7,140],['เต้าหู้แข็ง 100 ก.',13,120],['เวย์ 1 สกู๊ป',24,120],['ข้าว 1 ทัพพี',2,80]];
+function spark(l,ks){
+  if(ks.length<2)return '<p class="hint">บันทึกน้ำหนักอย่างน้อย 2 วันเพื่อดูกราฟ</p>';
+  const v=ks.map(k=>l[k]),mn=Math.min(...v)-.5,mx=Math.max(...v)+.5;
+  const pts=v.map((y,i)=>`${(i/(v.length-1)*290+5).toFixed(1)},${(65-(y-mn)/(mx-mn)*60).toFixed(1)}`).join(' ');
+  return `<svg class="spark" viewBox="0 0 300 70" preserveAspectRatio="none"><polyline points="${pts}" fill="none" stroke="#16a36a" stroke-width="3" stroke-linejoin="round" stroke-linecap="round" vector-effect="non-scaling-stroke"/></svg>`;
+}
+const box=document.createElement('section');box.className='nut';$('main').after(box);
+function renderNut(){
+  const P=prof(),c=calc(),log=J(TK,[]),tp=log.reduce((a,x)=>a+x.p,0),tk=log.reduce((a,x)=>a+x.k,0);
+  const l=wlog(),all=Object.keys(l).sort(),lw=latestW();
+  let proj='';
+  if(all.length>=2){
+    const d0=new Date(all[0]+'T00:00:00'),d1=new Date(all[all.length-1]+'T00:00:00'),days=(d1-d0)/864e5;
+    if(days>=14){const rate=(l[all[0]]-lw)/days*7,wk=Math.max(0,(GOAL-d1)/864e5/7);
+      proj=`<p class="hint">อัตราเฉลี่ย ${rate.toFixed(2)} กก./สัปดาห์ · ถ้ารักษาระดับนี้ 1 เม.ย. ≈ <b>${(lw-rate*wk).toFixed(1)} กก.</b></p>`;}
+  }
+  const r7=all.filter(k=>(TODAY-new Date(k+'T00:00:00'))/864e5<7).map(k=>l[k]);
+  const avg7=r7.length?(r7.reduce((a,b)=>a+b,0)/r7.length).toFixed(1):'–';
+  const diff=all.length?lw-l[all[0]]:null;
+  box.innerHTML=`<h3>🍽️ โภชนาการวันนี้</h3>
+  <div class="kp"><div><b>${c.kcal}</b><small>kcal/วัน</small></div><div><b>${c.pro} ก.</b><small>โปรตีน</small></div><div><b>${c.fat}/${c.carb}</b><small>ไขมัน/คาร์บ (ก.)</small></div></div>
+  <div class="mrow"><span>โปรตีน ${tp}/${c.pro} ก.</span><span>${tp>=c.pro?'✅ ครบแล้ว':'เหลือ '+(c.pro-tp)+' ก.'}</span></div>
+  <div class="meter"><i style="width:${Math.min(100,tp/c.pro*100)}%"></i></div>
+  <div class="mrow"><span>พลังงาน ${tk}/${c.kcal} kcal</span><span>${tk>c.kcal?'⚠️ เกินเป้า':'เหลือ '+(c.kcal-tk)}</span></div>
+  <div class="meter k"><i style="width:${Math.min(100,tk/c.kcal*100)}%"></i></div>
+  <div class="chips">${FOODS.map((f,i)=>`<button data-nf="${i}">+ ${f[0]}</button>`).join('')}</div>
+  <div class="inrow"><input id="nfP" type="number" inputmode="decimal" placeholder="โปรตีน (ก.)"><input id="nfK" type="number" inputmode="numeric" placeholder="kcal"><button data-nact="addc">เพิ่ม</button></div>
+  <div class="mrow"><span class="hint" style="margin:0">${log.length} รายการวันนี้</span><button class="skip" style="margin:0" data-nact="undo">↩ ลบรายการล่าสุด</button></div>
+  <h3>⚖️ น้ำหนัก</h3>
+  <div class="kp"><div><b>${lw??P.w}</b><small>ล่าสุด (กก.)</small></div><div><b>${avg7}</b><small>เฉลี่ย 7 วัน</small></div><div><b>${diff==null?'–':(diff>0?'+':'')+diff.toFixed(1)}</b><small>จากวันแรก</small></div></div>
+  ${spark(l,all.slice(-30))}${proj}
+  <p class="hint">เป้าที่ปลอดภัย: ลด ${(c.w*.005).toFixed(1)}–${(c.w*.01).toFixed(1)} กก./สัปดาห์ · ชั่งตอนเช้าหลังเข้าห้องน้ำ และดูค่าเฉลี่ยแทนค่ารายวัน</p>
+  <div class="inrow"><input id="wIn" type="number" inputmode="decimal" step="0.1" placeholder="น้ำหนักวันนี้ (กก.)"><button data-nact="saveW">บันทึก</button></div>
+  <details><summary>👤 ข้อมูลส่วนตัว (ใช้คำนวณ)</summary>
+   <div class="fgrid" style="margin-top:10px">
+    <label>เพศ<select id="pSex"><option value="m">ชาย</option><option value="f">หญิง</option></select></label>
+    <label>อายุ<input id="pAge" type="number" value="${P.age}"></label>
+    <label>ส่วนสูง (ซม.)<input id="pH" type="number" value="${P.h}"></label>
+    <label>น้ำหนักเริ่มต้น (กก.)<input id="pW" type="number" step="0.1" value="${P.w}"></label>
+    <label style="grid-column:1/-1">ระดับกิจกรรม<select id="pAct"><option value="1.375">เบา (ออกกำลัง 1–3 วัน)</option><option value="1.5">ปานกลาง (แอโรบิก + เวท 4–6 วัน)</option><option value="1.65">มาก (เกือบทุกวัน + เดินเยอะ)</option></select></label>
+   </div>
+   <button class="primary" data-nact="saveP">บันทึกข้อมูล</button>
+   <p class="hint">BMR ${Math.round(c.bmr)} · TDEE ≈ ${Math.round(c.tdee)} kcal · BMI ${c.bmi.toFixed(1)} · เป็นค่าประมาณ ถ้าน้ำหนักไม่ลด 2–3 สัปดาห์ ให้ลดลงอีก 150–200 kcal</p>
+  </details>
+  <details><summary>🥗 กินยังไงเมื่อเลิก IF</summary><ul>
+   <li>กิน 3–4 มื้อ ให้มีโปรตีน 35–45 ก. ทุกมื้อ</li>
+   <li>จานอาหาร: ผัก ½ · โปรตีน ¼ · ข้าวหรือแป้ง ¼</li>
+   <li>เลือกต้ม นึ่ง ย่าง แทนทอด เช่น ไก่ย่างไม่เอาหนัง ต้มยำน้ำใส สุกี้น้ำ</li>
+   <li>ของว่างโปรตีน: ไข่ต้ม อกไก่ นมจืด นมถั่วเหลืองไม่หวาน กรีกโยเกิร์ต</li>
+   <li>ลดน้ำหวาน ชานม และกาแฟเย็น ซึ่งมักให้ 200–400 kcal ต่อแก้ว</li>
+  </ul></details>`;
+  $('pSex').value=P.sex;$('pAct').value=String(P.act);
+}
+box.addEventListener('click',e=>{
+  const f=e.target.closest('[data-nf]'),a=e.target.closest('[data-nact]'),log=J(TK,[]);
+  if(f){const x=FOODS[+f.dataset.nf];log.push({n:x[0],p:x[1],k:x[2]});W(TK,log);renderNut();return;}
+  if(!a)return;
+  switch(a.dataset.nact){
+    case 'addc':{const p=+$('nfP').value||0,k=+$('nfK').value||0;if(p||k){log.push({n:'กำหนดเอง',p,k});W(TK,log);}renderNut();break;}
+    case 'undo':log.pop();W(TK,log);renderNut();break;
+    case 'saveW':{const v=parseFloat($('wIn').value);if(v>30&&v<300){const l=wlog();l[iso(TODAY)]=v;W('wlog',l);}renderNut();break;}
+    case 'saveP':W('prof',{sex:$('pSex').value,age:+$('pAge').value||30,h:+$('pH').value||193,w:+$('pW').value||117,act:+$('pAct').value});renderNut();break;
+  }
+});
+
+renderNut();render();
+})();
+</script>
 </body>
 </html>
