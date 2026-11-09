@@ -854,5 +854,68 @@ box.addEventListener('click',e=>{
 renderNut();render();
 })();
 </script>
+  <!-- ===== FitWeeks Add-on: ตั้งเวลาท่าค้างเอง ===== -->
+<style>
+.hset{margin-top:12px;background:var(--blue);border-radius:14px;padding:10px 12px}
+.hrow{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.hrow span{font-weight:600;font-size:14px;color:#1d3b6a}
+.hrow .stp{display:flex;align-items:center;gap:8px}
+.hrow .stp button{width:36px;height:36px;border-radius:50%;border:0;background:#fff;color:var(--g);font-size:20px;box-shadow:0 1px 3px rgba(0,0,0,.08)}
+.hrow .stp b{min-width:64px;text-align:center;font-size:18px}
+.hch{display:flex;gap:6px;margin-top:8px}
+.hch button{flex:1;border:1.5px solid var(--line);background:#fff;border-radius:10px;padding:6px 0;font-size:13px;font-weight:600}
+.hch button.on{border-color:var(--gb);background:var(--g2);color:var(--g)}
+.hnote{font-size:11px;color:var(--sub);margin-top:6px}
+</style>
+<script>
+(function(){
+  const KEY='holdTimes';
+  const load=()=>{try{return JSON.parse(localStorage.getItem(KEY))||{};}catch(e){return {};}};
+  // เวลาที่ผู้ใช้ตั้งไว้ต่อท่า (ต่อข้าง สำหรับ Side Plank) ถ้ายังไม่ตั้ง ให้ใช้ค่าแนะนำของเลเวล
+  const holdOf=e=>load()[e.m]||e.hold;
+  const setHold=(m,v)=>{const t=load();t[m]=Math.max(5,Math.min(300,v));localStorage.setItem(KEY,JSON.stringify(t));};
+  const resetHold=m=>{const t=load();delete t[m];localStorage.setItem(KEY,JSON.stringify(t));};
+  const PRESETS=[15,20,30,45,60];
+
+  /* การ์ดท่า: เพิ่มตัวตั้งเวลา */
+  const _exCard=exCard;
+  exCard=function(e,i,p,act){
+    if(!e.hold)return _exCard(e,i,p,act);
+    const s=holdOf(e),tot=s*(e.sides?2:1),custom=!!load()[e.m];
+    let h=_exCard(Object.assign({},e,{reps:s+' วิ'}),i,p,act);
+    if(!act)return h;
+    const ctl=`<div class="hset">
+      <div class="hrow"><span>⏱ เวลาค้าง${e.sides?' (ต่อข้าง)':''}</span>
+        <div class="stp"><button data-hs="-5" data-hm="${e.m}" data-hb="${s}">−</button><b>${s} วิ</b><button data-hs="5" data-hm="${e.m}" data-hb="${s}">+</button></div></div>
+      <div class="hch">${PRESETS.map(v=>`<button class="${v===s?'on':''}" data-hp="${v}" data-hm="${e.m}">${v}</button>`).join('')}</div>
+      <div class="hnote">ค่าแนะนำเลเวลนี้ ${e.hold} วิ${custom?` · <u data-hr="${e.m}" style="cursor:pointer">คืนค่าแนะนำ</u>`:''} · แอปจำค่าที่ตั้งไว้ให้</div>
+    </div>`;
+    const btn=`<button class="primary" data-act="doSet" data-i="${i}">▶ เริ่มจับเวลา ${tot} วิ${e.sides?` (ข้างละ ${s})`:''}</button>`;
+    return h.replace(/<button class="primary" data-act="doSet"[^>]*>[^<]*<\/button>/,ctl+btn);
+  };
+
+  /* เริ่มจับเวลาตามค่าที่ตั้ง */
+  doSet=function(i){
+    const e=DAYS[typeOf(sel)].list[i];
+    if(!e.hold)return completeSet(i);
+    const s=holdOf(e),c=(getProg()[i]||0)+1;
+    runSeq([{kind:'work',m:e.m,sec:s*(e.sides?2:1),sides:e.sides,beepFrom:3,
+      badge:`เซ็ต ${c}/${e.sets}`,sub:e.sides?`ข้างละ ${s} วิ`:`ค้าง ${s} วิ`}],()=>completeSet(i));
+  };
+
+  /* ปุ่มปรับเวลา */
+  document.addEventListener('click',ev=>{
+    const st=ev.target.closest('[data-hs]'),pr=ev.target.closest('[data-hp]'),rs=ev.target.closest('[data-hr]');
+    if(!st&&!pr&&!rs)return;
+    unlock();
+    if(st)setHold(st.dataset.hm,+st.dataset.hb + +st.dataset.hs);
+    if(pr)setHold(pr.dataset.hm,+pr.dataset.hp);
+    if(rs)resetHold(rs.dataset.hr);
+    const y=window.scrollY;render();window.scrollTo(0,y);
+  });
+
+  render();
+})();
+</script>
 </body>
 </html>
