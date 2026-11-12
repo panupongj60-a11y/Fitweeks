@@ -917,5 +917,141 @@ renderNut();render();
   render();
 })();
 </script>
+  <!-- ===== FitWeeks Add-on: ท่าแทน Side Plank (แทนบล็อกเดิม) ===== -->
+<style>
+.hch.wrap{flex-wrap:wrap}
+.hch.wrap button{flex:1 1 30%;font-size:12px;padding:7px 4px}
+</style>
+<script>
+(function(){
+  const fix=p=>p.length===11?[...p,[(p[1][0]+p[2][0])/2,(p[1][1]+p[2][1])/2]]:p;
+  const add=(k,o)=>{o.poses=o.poses.map(fix);MV[k]=o;};
+
+  // 0หัว 1คอ 2สะโพก 3ศอกA 4มือA 5ศอกB 6มือB 7เข่าA 8เท้าA 9เข่าB 10เท้าB
+  /* ยืนพิงผนัง */
+  const W1=[[37,22],[33,32],[50,62],[27,42],[23,30],[46,46],[50,60],[56,78],[62,92],[58,78],[66,92]];
+  const W2=[[35,22],[32,32],[43,62],[27,42],[23,30],[40,46],[44,60],[50,78],[58,92],[52,78],[62,92]];
+  add('sidewall',{n:'Wall Side Plank',th:'แพลงก์ข้างพิงผนัง (ยืน)',mus:'เอวด้านข้าง · ไหล่',per:3000,hl:'torso',
+    prop:'<rect x="14" y="6" width="5" height="88" rx="2" fill="#d5dde7"/>',poses:[W1,W2],
+    how:['ยืนข้างผนัง วางท่อนแขนบนผนัง ศอกอยู่ใต้ไหล่','เดินเท้าออกให้ตัวเอียง ลำตัวเป็นเส้นตรง','ดันสะโพกเข้าหาผนังเบาๆ ค้างไว้ ได้ยินตู๊ดคู่ให้สลับข้าง'],
+    easy:'เดินเท้าเข้าใกล้ผนัง หรือค้างสั้นลง',hard:'เดินเท้าออกห่างผนังขึ้น'});
+
+  /* นอนตะแคงยกขา */
+  const L1=[[14,80],[22,83],[52,86],[34,76],[44,80],[14,90],[24,90],[72,86],[92,88],[72,88],[92,90]];
+  const L2=[[14,80],[22,83],[52,86],[34,76],[44,80],[14,90],[24,90],[72,76],[92,66],[72,88],[92,90]];
+  add('sidelift',{n:'Side-lying Leg Raise',th:'นอนตะแคงยกขา',mus:'เอว · สะโพกด้านข้าง',per:3200,hl:'legA1 legA2',poses:[L1,L2],
+    how:['นอนตะแคงบนเสื่อ ศีรษะหนุนแขนล่าง','ขาล่างงอเล็กน้อยเพื่อทรงตัว ขาบนเหยียดตรง','ยกขาบนขึ้นช้าๆ ลำตัวนิ่ง ไม่หมุน แล้วลดลงช้าๆ'],
+    easy:'ยกขาให้ต่ำลง ช้าลง',hard:'ค้างด้านบน 2 วิ'});
+
+  /* Knee Plank Knee-in */
+  const KPL=[[79,70],[70,74],[44,80],[70,90],[82,90],[71,90],[83,90],[28,90],[10,82],[29,90],[11,82]];
+  const KI1=mod(KPL,{7:[60,82],8:[48,88]}),KI2=mod(KPL,{9:[60,82],10:[48,88]});
+  add('kneein',{n:'Knee Plank Knee-in',th:'แพลงก์วางเข่า ยกเข่าเข้าหาศอก',mus:'เอว · แกนกลาง',per:3600,hl:'torso legA1 legB1',poses:[KPL,KI1,KPL,KI2],
+    how:['ตั้งท่า Plank วางเข่า ศอกอยู่ใต้ไหล่','ยกเข่าหนึ่งข้างขึ้นเข้าหาศอกข้างเดียวกันช้าๆ','สะโพกไม่โยก แล้ววางเข่าลงและสลับข้าง'],
+    easy:'ยกเข่าแค่พ้นพื้นเล็กน้อย',hard:'ค้างตอนเข่าชิดศอก 2 วิ'});
+
+  /* Bird Dog Crunch */
+  const BDC=mod(QD,{0:[72,72],1:[64,70],3:[56,74],4:[50,70],7:[56,82],8:[42,92]});
+  add('bdcrunch',{n:'Bird Dog Crunch',th:'คลานยื่นแขนขา ดึงศอกเข้าหาเข่า',mus:'แกนกลาง · เอว · หลัง',per:3800,hl:'torso armA1 armA2 legA1 legA2',poses:[BD,BDC,QD,BD],
+    how:['คุกเข่าบนเสื่อ มือใต้ไหล่ เข่าใต้สะโพก','เหยียดแขนกับขาฝั่งตรงข้ามให้ขนานพื้น','ดึงศอกเข้าหาเข่าใต้ลำตัว แล้วเหยียดออกใหม่ ทำครบแล้วสลับข้าง'],
+    easy:'ไม่ต้องดึงเข้า แค่ยื่นแล้วค้าง 2 วิ',hard:'ทำช้าลงและค้างตอนเข่าแตะศอก 2 วิ'});
+
+  /* Slow Bicycle Crunch */
+  const BK1=[[34,78],[42,82],[62,88],[30,70],[35,63],[28,74],[33,67],[74,72],[86,80],[82,86],[97,88]];
+  const BK2=[[34,78],[42,82],[62,88],[30,70],[35,63],[28,74],[33,67],[82,86],[97,88],[74,72],[86,80]];
+  add('bike',{n:'Slow Bicycle Crunch',th:'ปั่นจักรยานอากาศช้าๆ',mus:'เอวด้านข้าง · ท้อง',per:3400,hl:'torso',poses:[BK1,BK2],
+    how:['นอนหงาย มือประคองหลังศีรษะ ไม่ดึงคอ','ยกไหล่พ้นเสื่อ หมุนตัวให้ศอกแตะเข่าฝั่งตรงข้าม','เหยียดขาอีกข้างตรงลอยใกล้พื้น ทำช้าๆ แล้วสลับ'],
+    easy:'ปลายเท้าแตะพื้น สลับทีละข้างช้าๆ',hard:'ค้างตอนศอกแตะเข่า 2 วิ'});
+
+  /* Standing Side Crunch */
+  const SC1=[[44,18],[46,28],[50,52],[36,22],[44,15],[62,22],[54,15],[34,58],[40,74],[54,72],[55,92]];
+  const SC2=[[56,18],[54,28],[50,52],[38,22],[46,15],[64,22],[56,15],[45,72],[45,92],[66,58],[60,74]];
+  add('sidecrunch',{n:'Standing Side Crunch',th:'ยืนยกเข่าด้านข้าง เอียงตัวลง',mus:'เอวด้านข้าง',per:3200,hl:'torso',poses:[SC1,X0,SC2,X0],
+    how:['ยืนตรง มือประคองหลังศีรษะ ศอกกางออก','ยกเข่าข้างหนึ่งออกด้านข้าง พร้อมเอียงศอกลงหาเข่า','ลดลงช้าๆ แล้วสลับข้าง ไม่กระโดด'],
+    easy:'ยกเข่าต่ำลง ช้าลง',hard:'ค้างตอนศอกแตะเข่า 2 วิ'});
+
+  const OPT={
+    kneeplank:{label:'Plank วางเข่า',e:{m:'plank',hold:20,sides:0,unit:'',reps:'20 วิ'}},
+    kneein:{label:'เข่าเข้าหาศอก',e:{m:'kneein',reps:'8–10',unit:'ต่อข้าง'}},
+    bdcrunch:{label:'Bird Dog Crunch',e:{m:'bdcrunch',reps:'6–8',unit:'ต่อข้าง'}},
+    bike:{label:'จักรยานอากาศ',e:{m:'bike',reps:'10–12',unit:'ต่อข้าง'}},
+    sidecrunch:{label:'ยืนยกเข่าข้าง',e:{m:'sidecrunch',reps:'10–12',unit:'ต่อข้าง'}},
+    sidewall:{label:'ยืนพิงผนัง',e:{m:'sidewall',hold:10,sides:1,reps:'10 วิ',unit:'ต่อข้าง'}},
+    sidelift:{label:'นอนยกขา',e:{m:'sidelift',reps:'10–12',unit:'ต่อข้าง'}}
+  };
+  const KEYS=['sideplank','sidefull'],SK='swapSP';
+
+  const _ex=exCard;
+  exCard=function(e,i,p,act){
+    if(!KEYS.includes(e.m))return _ex(e,i,p,act);
+    const c=localStorage.getItem(SK)||'';
+    let e2=e;
+    if(OPT[c]){
+      e2=Object.assign({},e,OPT[c].e);
+      if(!OPT[c].e.hold){delete e2.hold;delete e2.sides;}
+      DAYS[typeOf(sel)].list[i]=e2;
+    }
+    let h=_ex(e2,i,p,act);
+    if(act){
+      const btn=(k,t)=>`<button class="${c===k?'on':''}" data-sp="${k}">${t}</button>`;
+      const box=`<div class="hset"><div class="hrow"><span>🔧 เลือกท่าแทนแพลงก์ข้าง</span></div>
+        <div class="hch wrap">${btn('','ปกติ')}${Object.keys(OPT).map(k=>btn(k,OPT[k].label)).join('')}</div>
+        <div class="hnote">แอปจำท่าที่เลือกไว้ให้ · แนะนำเริ่มจาก "Plank วางเข่า" หรือ "เข่าเข้าหาศอก"</div></div>`;
+      h=h.replace('<div class="setrow">',box+'<div class="setrow">');
+    }
+    return h;
+  };
+
+  document.addEventListener('click',ev=>{
+    const b=ev.target.closest('[data-sp]');if(!b)return;
+    localStorage.setItem(SK,b.dataset.sp);
+    const y=window.scrollY;render();window.scrollTo(0,y);
+  });
+  render();
+})();
+</script>
+  <!-- ===== FitWeeks Add-on: นับถอยหลังเตรียมตัวก่อนท่าค้าง ===== -->
+<script>
+(function(){
+  const PK='prepSec';
+  const getPrep=()=>{const v=localStorage.getItem(PK);return v===null?5:+v;};
+
+  /* เริ่มท่าค้าง: เตรียมตัวก่อน แล้วค่อยจับเวลา */
+  doSet=function(i){
+    const e=DAYS[typeOf(sel)].list[i];
+    if(!e.hold)return completeSet(i);
+    let saved={};try{saved=JSON.parse(localStorage.getItem('holdTimes'))||{};}catch(x){}
+    const s=saved[e.m]||e.hold,c=(getProg()[i]||0)+1,prep=getPrep(),steps=[];
+    if(prep>0)steps.push({kind:'rest',prep:1,m:e.m,sec:prep,beepFrom:prep,
+      badge:'🏁 เตรียมตัว',sub:`ค้าง ${s} วิ${e.sides?' ต่อข้าง':''}`,q:`เซ็ต ${c}/${e.sets}`});
+    steps.push({kind:'work',m:e.m,sec:s*(e.sides?2:1),sides:e.sides,beepFrom:3,
+      badge:`เซ็ต ${c}/${e.sets}`,sub:e.sides?`ข้างละ ${s} วิ`:`ค้าง ${s} วิ`});
+    runSeq(steps,()=>completeSet(i));
+  };
+
+  /* ข้อความบนหน้าเตรียมตัว */
+  const _cd=countdown;
+  countdown=function(sec,o){
+    const s=seq&&seq.steps[seq.i];
+    if(s&&s.prep){
+      const t=o.onTick;
+      o.onTick=(r,tt)=>{
+        t(r,tt);
+        $('ovCap').textContent='ท่าที่กำลังจะเริ่ม';
+        $('ovM').textContent=r>0?`🏁 เตรียมท่า... เริ่มใน ${r} วินาที`:'เริ่ม!';
+      };
+    }
+    return _cd(sec,o);
+  };
+
+  /* ตั้งค่า */
+  document.querySelector('#set [data-act="testSound"]').insertAdjacentHTML('beforebegin',
+   `<div class="srow"><span>เตรียมตัวก่อนท่าค้าง</span>
+    <select id="cPrep" style="border:1.5px solid var(--line);border-radius:10px;padding:6px;font:inherit">
+     <option value="0">ปิด</option><option value="3">3 วินาที</option><option value="5">5 วินาที</option><option value="10">10 วินาที</option></select></div>`);
+  $('cPrep').value=String(getPrep());
+  $('cPrep').onchange=e=>localStorage.setItem(PK,e.target.value);
+})();
+</script>
 </body>
 </html>
