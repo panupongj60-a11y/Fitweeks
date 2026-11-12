@@ -1129,5 +1129,72 @@ renderNut();render();
   render();
 })();
 </script>
+  <!-- ===== FitWeeks Add-on: สลับข้างอัตโนมัติ + เวลาเช็กท่า ===== -->
+<script>
+(function(){
+  const SW='swSec';
+  const getSw=()=>{const v=localStorage.getItem(SW);return v===null?5:+v;};
+
+  /* ท่าจับเวลาในการ์ด: ถ้ามี 2 ข้าง แยกเป็น ข้างที่ 1 -> สลับข้าง -> ข้างที่ 2 */
+  const _prevDoSet=doSet;
+  doSet=function(i){
+    const e=DAYS[typeOf(sel)].list[i];
+    if(!e.hold||!e.sides)return _prevDoSet(i);   // ท่าข้างเดียวใช้ของเดิม (มีเตรียมตัวอยู่แล้ว)
+    let saved={};try{saved=JSON.parse(localStorage.getItem('holdTimes'))||{};}catch(x){}
+    const s=saved[e.m]||e.hold,c=(getProg()[i]||0)+1,prep=+(localStorage.getItem('prepSec')??5),sw=getSw(),st=[];
+    const q=`เซ็ต ${c}/${e.sets}`;
+    if(prep>0)st.push({kind:'rest',prep:1,m:e.m,sec:prep,beepFrom:prep,badge:'🏁 เตรียมตัว',sub:`ข้างละ ${s} วิ`,q});
+    st.push({kind:'work',m:e.m,sec:s,side:1,beepFrom:3,badge:`เซ็ต ${c}/${e.sets} · ข้างที่ 1`,sub:`ค้าง ${s} วิ`});
+    if(sw>0)st.push({kind:'rest',sw:1,m:e.m,sec:sw,beepFrom:sw,badge:'🔄 สลับข้าง',sub:`ข้างที่ 2 ค้าง ${s} วิ`,q});
+    st.push({kind:'work',m:e.m,sec:s,side:2,beepFrom:3,badge:`เซ็ต ${c}/${e.sets} · ข้างที่ 2`,sub:`ค้าง ${s} วิ`});
+    runSeq(st,()=>completeSet(i));
+  };
+
+  /* วอร์มอัพ / คูลดาวน์: ท่า 2 ข้างแยกเป็นสองช่วง คั่นด้วยสลับข้าง */
+  guided=function(items,badge,onFin){
+    const st=[],sw=getSw();
+    items.forEach((w,j)=>{
+      const q=`${badge} ${j+1}/${items.length}`;
+      st.push({kind:'rest',m:w.m,sec:5,beepFrom:3,badge:j?'เตรียมท่าต่อไป':'เตรียมตัว',sub:w.l,q});
+      if(w.sides){
+        const h=Math.max(5,Math.round(w.sec/2));
+        st.push({kind:'work',m:w.m,sec:h,side:1,badge:badge+' · ข้างที่ 1',sub:w.l,q});
+        if(sw>0)st.push({kind:'rest',sw:1,m:w.m,sec:sw,beepFrom:sw,badge:'🔄 สลับข้าง',sub:w.l,q});
+        st.push({kind:'work',m:w.m,sec:h,side:2,badge:badge+' · ข้างที่ 2',sub:w.l,q});
+      }else{
+        st.push({kind:'work',m:w.m,sec:w.sec,badge,sub:w.l,q});
+      }
+    });
+    runSeq(st,onFin);
+  };
+
+  /* ข้อความบนหน้าจอ */
+  const _cd=countdown;
+  countdown=function(sec,o){
+    const s=seq&&seq.steps[seq.i];
+    if(s&&(s.sw||s.side)){
+      const t=o.onTick;
+      o.onTick=(r,tt)=>{
+        t(r,tt);
+        if(s.sw){
+          $('ovCap').textContent='สลับไปทำอีกข้าง';
+          $('ovM').textContent=r>0?`🔄 สลับข้าง! เช็กท่าให้พร้อม... เริ่มใน ${r} วิ`:'เริ่มอีกข้าง!';
+        }else{
+          $('ovM').textContent=`ข้างที่ ${s.side} จาก 2`;
+        }
+      };
+    }
+    return _cd(sec,o);
+  };
+
+  /* ตั้งค่า */
+  document.querySelector('#set [data-act="testSound"]').insertAdjacentHTML('beforebegin',
+   `<div class="srow"><span>เวลาสลับข้าง (เช็กท่า)</span>
+    <select id="cSw" style="border:1.5px solid var(--line);border-radius:10px;padding:6px;font:inherit">
+     <option value="0">ปิด</option><option value="3">3 วินาที</option><option value="5">5 วินาที</option><option value="10">10 วินาที</option></select></div>`);
+  $('cSw').value=String(getSw());
+  $('cSw').onchange=e=>localStorage.setItem(SW,e.target.value);
+})();
+</script>
 </body>
 </html>
