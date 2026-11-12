@@ -1053,5 +1053,81 @@ renderNut();render();
   $('cPrep').onchange=e=>localStorage.setItem(PK,e.target.value);
 })();
 </script>
+  <!-- ===== FitWeeks Add-on: เลือกท่าแทน Good Morning ===== -->
+<script>
+(function(){
+  const fix=p=>p.length===11?[...p,[(p[1][0]+p[2][0])/2,(p[1][1]+p[2][1])/2]]:p;
+  const add=(k,o)=>{o.poses=o.poses.map(fix);MV[k]=o;};
+
+  // 0หัว 1คอ 2สะโพก 3ศอกA 4มือA 5ศอกB 6มือB 7เข่าA 8เท้าA 9เข่าB 10เท้าB
+
+  /* ก้นแตะผนัง */
+  const WH1=[[36,16],[36,26],[29,52],[40,40],[34,34],[41,41],[36,34],[34,72],[38,92],[35,72],[39,92]];
+  const WH2=[[60,38],[52,42],[29,52],[56,48],[50,46],[57,49],[51,47],[36,72],[38,92],[37,72],[39,92]];
+  add('wallhinge',{n:'Wall Hip Hinge',th:'พับสะโพก ก้นแตะผนัง',mus:'ต้นขาหลัง · ก้น',per:3200,hl:'legA1 legB1',
+    prop:'<rect x="19" y="6" width="5" height="88" rx="2" fill="#d5dde7"/>',poses:[WH1,WH2],
+    how:['ยืนหันหลังให้ผนัง ห่างประมาณ 1 ฟุต เข่างอเล็กน้อย ไขว้แขนที่อก','ดันก้นไปข้างหลังจนแตะผนัง หลังตรง ไม่ก้มหลัง','บีบก้นแล้วยืนขึ้น ลงช้าๆ ประมาณ 2–3 วิ'],
+    easy:'ยืนใกล้ผนังขึ้น ลงตื้นๆ',hard:'ยืนห่างผนังขึ้น หรือลงช้า 4 วิ'});
+
+  /* มือไถต้นขา */
+  const HT1=mod(ST,{3:[48,40],4:[52,56],5:[48,40],6:[52,56]});
+  const HT2=[[71,42],[62,45],[42,54],[57,56],[52,67],[57,56],[53,67],[49,73],[47,92],[50,73],[48,92]];
+  add('thighhinge',{n:'Hands-on-thigh Hinge',th:'พับสะโพก มือไถต้นขา',mus:'ต้นขาหลัง · ก้น',per:3200,hl:'legA1 legB1',poses:[HT1,HT2],
+    how:['ยืนเท้ากว้างเท่าสะโพก เข่างอเล็กน้อย วางมือบนต้นขา','ดันก้นไปข้างหลัง ไถมือลงไปที่เหนือเข่า หลังตรง','เมื่อรู้สึกตึงต้นขาด้านหลัง ให้บีบก้นแล้วไถมือกลับขึ้น'],
+    easy:'ลงตื้นลง แค่ให้รู้สึกตึงเบาๆ',hard:'ลงช้า 4 วิ แล้วเปลี่ยนไปวางมือไขว้อก'});
+
+  /* คุกเข่า */
+  const KH1=[[56,20],[56,30],[56,58],[60,42],[54,36],[61,43],[55,37],[58,86],[32,90],[59,86],[33,90]];
+  const KH2=[[87,40],[78,44],[56,58],[80,53],[74,49],[81,54],[75,50],[58,86],[32,90],[59,86],[33,90]];
+  add('kneelhinge',{n:'Kneeling Hip Hinge',th:'คุกเข่าพับสะโพก',mus:'ต้นขาหลัง · ก้น · หลังล่าง',per:3400,hl:'torso legA1 legB1',poses:[KH1,KH2],
+    how:['คุกเข่าบนเสื่อ เข่ากว้างเท่าสะโพก ไขว้แขนที่อก','เกร็งท้อง พับตัวไปข้างหน้าจากสะโพก หลังตรง','ลงเท่าที่หลังยังตรง แล้วบีบก้นดันตัวกลับขึ้น'],
+    easy:'ลงตื้นๆ แค่โน้มตัวเล็กน้อย',hard:'ค้างด้านล่าง 2 วิ'});
+
+  /* ก้าวขาไว้หลัง */
+  const KS1=mod(ST,{3:[55,40],4:[48,34],5:[56,41],6:[49,35],7:[53,73],8:[57,92],9:[46,73],10:[38,90]});
+  const KS2=[[71,41],[62,45],[42,54],[66,54],[58,48],[67,55],[59,49],[50,73],[56,92],[40,73],[31,90]];
+  add('kickhinge',{n:'Kickstand Hinge',th:'พับสะโพก ก้าวขาไว้หลัง',mus:'ต้นขาหลัง · ก้น · การทรงตัว',per:3400,hl:'legA1 legB1',poses:[KS1,KS2],
+    how:['ยืนเท้าหน้ารับน้ำหนักเกือบทั้งหมด เท้าหลังแตะพื้นด้วยปลายเท้าไว้ช่วยทรงตัว','พับสะโพกไปข้างหน้า หลังตรง ไขว้แขนที่อก','บีบก้นยืนขึ้น ทำครบข้างหนึ่งแล้วสลับข้าง'],
+    easy:'แตะผนังไว้ช่วยทรงตัว',hard:'ยกเท้าหลังลอยจากพื้นเล็กน้อย'});
+
+  const OPT={
+    wall:{label:'ก้นแตะผนัง',e:{m:'wallhinge',reps:'10–12'}},
+    thigh:{label:'มือไถต้นขา',e:{m:'thighhinge',reps:'10–12'}},
+    kneel:{label:'คุกเข่า',e:{m:'kneelhinge',reps:'10–12'}},
+    kick:{label:'ก้าวขาไว้หลัง',e:{m:'kickhinge',reps:'8–10',unit:'ต่อข้าง'}},
+    bridge:{label:'Glute Bridge',e:{m:'bridge',reps:'12–15'}},
+    superman:{label:'Superman',e:{m:'superman',reps:'10'}}
+  };
+  const KEYS=['goodmorning','slhinge'],SK='swapGM';
+
+  const _ex=exCard;
+  exCard=function(e,i,p,act){
+    if(!KEYS.includes(e.m))return _ex(e,i,p,act);
+    const c=localStorage.getItem(SK)||'';
+    let e2=e;
+    if(OPT[c]){
+      e2=Object.assign({},e,OPT[c].e);
+      if(!OPT[c].e.unit)delete e2.unit;
+      DAYS[typeOf(sel)].list[i]=e2;
+    }
+    let h=_ex(e2,i,p,act);
+    if(act){
+      const btn=(k,t)=>`<button class="${c===k?'on':''}" data-gm="${k}">${t}</button>`;
+      const box=`<div class="hset"><div class="hrow"><span>🔧 เลือกท่าแทน Good Morning</span></div>
+        <div class="hch wrap">${btn('','ปกติ')}${Object.keys(OPT).map(k=>btn(k,OPT[k].label)).join('')}</div>
+        <div class="hnote">แอปจำท่าที่เลือกไว้ให้ · แนะนำเริ่มจาก "ก้นแตะผนัง"</div></div>`;
+      h=h.replace('<div class="setrow">',box+'<div class="setrow">');
+    }
+    return h;
+  };
+
+  document.addEventListener('click',ev=>{
+    const b=ev.target.closest('[data-gm]');if(!b)return;
+    localStorage.setItem(SK,b.dataset.gm);
+    const y=window.scrollY;render();window.scrollTo(0,y);
+  });
+  render();
+})();
+</script>
 </body>
 </html>
