@@ -1196,5 +1196,142 @@ renderNut();render();
   $('cSw').onchange=e=>localStorage.setItem(SW,e.target.value);
 })();
 </script>
+  <!-- ===== FitWeeks Add-on: ยางยืด + สลับ ABA/BAB อัตโนมัติ ===== -->
+<style>
+.eq{width:100%;border:1.5px dashed #c4b5fd;background:#faf5ff;color:#7c3aed;border-radius:14px;padding:11px;font-weight:600;font-size:15px}
+.eq.on{border-style:solid;border-color:#7c3aed;background:#7c3aed;color:#fff}
+.bandlib{border-color:#e9d5ff!important}
+.bandlib .hs{margin-top:10px}
+.bandlib h4{margin:12px 0 4px;font-size:15px;color:#6d28d9}
+</style>
+<script>
+(function(){
+  const fix=p=>p.length===11?[...p,[(p[1][0]+p[2][0])/2,(p[1][1]+p[2][1])/2]]:p;
+  const add=(k,o)=>{o.poses=o.poses.map(fix);MV[k]=o;};
+  const bandOn=()=>localStorage.getItem('eqBand')==='1';
+
+  /* ---------- ท่ายางยืด (band = คู่จุดที่ยางขึงอยู่) ---------- */
+  // 0หัว 1คอ 2สะโพก 3ศอกA 4มือA 5ศอกB 6มือB 7เข่าA 8เท้าA 9เข่าB 10เท้าB
+  const FEET=[[8,4],[10,6]],HANDS=[[4,6]];
+  add('bandrow',{n:'Seated Band Row',th:'นั่งดึงยางเข้าหาลำตัว',mus:'หลังกลาง · แขนหน้า · 🟣 ยางยืด',per:3000,hl:'armA1 armA2 armB1 armB2 torso',band:FEET,
+    poses:[[[33,54],[32,64],[28,89],[42,70],[55,73],[43,71],[56,74],[48,89],[68,87],[49,90],[69,88]],
+           [[30,54],[30,64],[28,89],[19,72],[32,72],[20,73],[33,73],[48,89],[68,87],[49,90],[69,88]]],
+    how:['นั่งบนเสื่อ เหยียดขา คล้องยางกลางฝ่าเท้า จับปลายยางสองมือ','นั่งหลังตรง ดึงศอกไปข้างหลังชิดลำตัว บีบสะบักเข้าหากัน ค้าง 1 วิ','ปล่อยแขนกลับช้าๆ 2–3 วิ ไม่เอนตัวไปข้างหลัง'],
+    easy:'งอเข่าเล็กน้อย หรือจับยางให้ยาวขึ้น',hard:'จับยางสั้นลง ใช้ยางเส้นหนักขึ้น หรือค้าง 2 วิ'});
+  add('pullapart',{n:'Band Pull-apart',th:'ดึงยางแยกออกข้าง',mus:'ไหล่หลัง · สะบัก · 🟣 ยางยืด',per:2600,hl:'armA1 armA2 armB1 armB2',band:HANDS,
+    poses:[mod(FR,{3:[43,31],4:[46,29],5:[57,31],6:[54,29]}),mod(FR,{3:[37,28],4:[24,28],5:[63,28],6:[76,28]})],
+    how:['ยืนตรง ถือยางด้วยสองมือ ยื่นแขนตรงไปข้างหน้าระดับไหล่','ดึงยางแยกออกด้านข้างจนยางแตะอก บีบสะบัก','ไหล่ไม่ยก กลับช้าๆ'],
+    easy:'จับยางให้กว้างขึ้น',hard:'จับยางให้แคบลง หรือค้าง 2 วิ'});
+  add('pulldown',{n:'Band Pulldown',th:'ดึงยางจากเหนือศีรษะลงมา',mus:'ปีก (หลังข้าง) · แขนหน้า · 🟣 ยางยืด',per:3000,hl:'armA1 armA2 armB1 armB2 torso',band:HANDS,
+    poses:[mod(FR,{3:[41,14],4:[36,4],5:[59,14],6:[64,4]}),mod(FR,{3:[36,36],4:[32,22],5:[64,36],6:[68,22]})],
+    how:['ยืนหรือคุกเข่า ถือยางสองมือ ยกแขนเหนือศีรษะ มือกว้างกว่าไหล่','ดึงยางแยกออกพร้อมลดศอกลงข้างลำตัว จนยางอยู่ระดับคาง','บีบหลัง ค้าง 1 วิ แล้วยกกลับช้าๆ'],
+    easy:'จับยางกว้างขึ้น',hard:'จับยางแคบลง หรือใช้ยางหนักขึ้น'});
+  add('bandpress',{n:'Band Overhead Press',th:'เหยียบยาง ดันขึ้นเหนือศีรษะ',mus:'ไหล่ · หลังแขน · 🟣 ยางยืด',per:2800,hl:'armA1 armA2 armB1 armB2',band:FEET,
+    poses:[mod(FR,{3:[38,36],4:[40,24],5:[62,36],6:[60,24]}),mod(FR,{3:[42,14],4:[43,3],5:[58,14],6:[57,3]})],
+    how:['เหยียบยางกลางฝ่าเท้า เท้ากว้างเท่าสะโพก จับยางที่ระดับไหล่','เกร็งท้องและก้น ดันมือขึ้นตรงเหนือศีรษะ ไม่แอ่นหลัง','ลดลงช้าๆ กลับมาที่ระดับไหล่'],
+    easy:'เหยียบเท้าเดียว หรือทำทีละแขน',hard:'เหยียบกว้างขึ้น หรือใช้ยางหนักขึ้น'});
+  add('bandcurl',{n:'Band Curl',th:'เหยียบยาง งอแขนดึงขึ้น',mus:'แขนหน้า · 🟣 ยางยืด',per:2600,hl:'armA1 armA2',band:FEET,
+    poses:[ST,mod(ST,{3:[50,40],4:[58,31],5:[50,40],6:[59,32]})],
+    how:['เหยียบยางกลางฝ่าเท้า จับปลายยาง แขนเหยียดข้างลำตัว','ศอกชิดลำตัว งอแขนดึงยางขึ้นมาที่ไหล่','ลดลงช้า 2–3 วิ'],
+    easy:'เหยียบเท้าเดียว',hard:'เหยียบกว้างขึ้น หรือลงช้า 4 วิ'});
+  add('bandsquat',{n:'Banded Squat',th:'เหยียบยาง สควอทจับยางที่ไหล่',mus:'ต้นขา · ก้น · 🟣 ยางยืด',per:3000,hl:'legA1 legB1',band:FEET,
+    poses:[mod(ST,{3:[56,38],4:[54,27],5:[57,39],6:[55,28]}),mod(SQ1,{3:[58,55],4:[55,45],5:[59,56],6:[56,46]})],
+    how:['เหยียบยาง เท้ากว้างเท่าสะโพก จับปลายยางไว้ที่ระดับไหล่','ส่งก้นไปข้างหลัง ย่อลงเหมือนสควอทปกติ','ดันส้นเท้ายืนขึ้นสู้แรงยาง'],
+    easy:'ใช้ยางเบา หรือลงตื้นลง',hard:'ยางหนักขึ้น หรือลงช้า 3 วิ'});
+
+  /* ---------- วาดเส้นยางให้ยืดตามท่า ---------- */
+  const _mount=mount;
+  mount=function(box,key){
+    _mount(box,key);
+    const m=MV[key];if(!m||!m.band)return;
+    const f=figs[figs.length-1],g=f.svg.querySelector('g');
+    f.bl=m.band.map(()=>{const l=document.createElementNS('http://www.w3.org/2000/svg','line');
+      l.setAttribute('stroke','#a855f7');l.setAttribute('stroke-width','2.5');l.setAttribute('stroke-linecap','round');
+      f.svg.insertBefore(l,g);return l;});
+  };
+  function bandLoop(now){
+    for(const f of figs){
+      if(!f.bl||!f.svg.isConnected)continue;
+      const ps=f.m.poses,n=ps.length,x=(now/f.m.per)%1*n,k=Math.floor(x),t=(1-Math.cos(Math.PI*(x-k)))/2,A=ps[k],B=ps[(k+1)%n];
+      const P=j=>[A[j][0]+(B[j][0]-A[j][0])*t,A[j][1]+(B[j][1]-A[j][1])*t];
+      f.m.band.forEach((pr,j)=>{const a=P(pr[0]),b=P(pr[1]),l=f.bl[j];
+        l.setAttribute('x1',a[0]);l.setAttribute('y1',a[1]);l.setAttribute('x2',b[0]);l.setAttribute('y2',b[1]);});
+    }
+    requestAnimationFrame(bandLoop);
+  }
+  requestAnimationFrame(bandLoop);
+
+  /* ---------- สัปดาห์ / เลเวล ---------- */
+  const wk=()=>{const s=new Date((localStorage.getItem('planStart')||iso(MON))+'T00:00:00');
+    return Math.max(1,Math.floor((dateOf(sel)-s)/864e5/7)+1);};
+  const lvInfo=()=>{if(S.lvl)return{lv:S.lvl,dl:0};const w=wk();return{lv:w<=4?1:w<=9?2:w<=13?3:4,dl:w===9||w===18};};
+
+  /* ---------- เพิ่มท่ายางยืดท้ายวัน A / B ---------- */
+  const R=['12–15','15','12–15','15–20'];
+  const BP={A:[['bandrow',R],['pullapart',['15','15–20','15–20','20']]],
+            B:[['pulldown',R],['bandpress',['10–12','12','12–15','15']]]};
+  const bandFor=(k,L)=>BP[k].map(([m,r])=>({m,sets:L.dl||L.lv===1?2:3,reps:r[L.lv-1]}));
+  ['A','B'].forEach(k=>{
+    let base=DAYS[k].list,cache=null;
+    Object.defineProperty(DAYS[k],'list',{configurable:true,enumerable:true,
+      get(){
+        if(!bandOn())return base;
+        const L=lvInfo(),kk=L.lv+'|'+L.dl;
+        if(!cache||cache.base!==base||cache.kk!==kk)cache={base,kk,arr:base.concat(bandFor(k,L))};
+        return cache.arr;
+      },
+      set(v){base=v;cache=null;}});
+  });
+
+  /* ---------- ปุ่ม + คลังท่า ---------- */
+  const btn=document.createElement('button');btn.className='eq';
+  const lib=document.createElement('details');lib.className='bandlib';
+  lib.innerHTML=`<summary>🟣 ท่ายางยืด + วิธีใช้</summary>
+   <div class="hs">${miniList([{m:'bandrow',l:'วัน A'},{m:'pullapart',l:'วัน A'},{m:'pulldown',l:'วัน B'},{m:'bandpress',l:'วัน B'},{m:'bandcurl',l:'เสริม'},{m:'bandsquat',l:'แทน Squat'}])}</div>
+   <p class="hint">กดที่ท่าเพื่อดูภาพเคลื่อนไหวและวิธีทำ · เส้นสีม่วงคือยางยืด</p>
+   <h4>เลือกความหนักของยาง</h4><ul>
+    <li>2–3 ครั้งสุดท้ายของเซ็ตควรหนัก แต่ท่ายังถูก และยังเหลือแรงอีกประมาณ 2 ครั้ง</li>
+    <li>ท่าดึงหลัง (Row, Pulldown) มักใช้ยางหนักกว่าท่าไหล่ (Pull-apart, Press)</li>
+    <li>ทำได้ครบจำนวนครั้งสูงสุดง่ายเกินไป → จับยางสั้นลง, เหยียบกว้างขึ้น, เปลี่ยนเส้นหนักขึ้น หรือใช้ 2 เส้นซ้อนกัน</li></ul>
+   <h4>เทคนิคให้ได้ผล</h4><ul>
+    <li><b>จังหวะ:</b> ดึง 1 วิ · ค้าง 1 วิ · ปล่อยช้า 2–3 วิ อย่าปล่อยให้ยางดีดกลับ</li>
+    <li><b>ท่าทาง:</b> ข้อมือตรง ไหล่ไม่ยกขึ้นหาหู เกร็งท้องตลอด</li>
+    <li><b>ตัวสูง:</b> ถ้ายางตึงมากตั้งแต่เริ่ม ให้เหยียบเท้าเดียวหรือจับปลายยางให้ยาวขึ้น</li></ul>
+   <h4>ความปลอดภัย</h4><ul>
+    <li>ตรวจรอยแตก รอยบาง หรือรอยฉีกก่อนใช้ทุกครั้ง ถ้าเจอให้เปลี่ยนเส้นใหม่</li>
+    <li>เหยียบยางกลางฝ่าเท้าให้มั่นคง และไม่ดึงยางในทิศที่ยางจะดีดเข้าหน้า</li>
+    <li>เก็บยางให้พ้นแดดและความร้อน ยางจะเสื่อมช้าลง</li></ul>`;
+  $('tabs').after(btn);btn.after(lib);mountAll(lib);
+  const syncEq=()=>{const on=bandOn();btn.classList.toggle('on',on);
+    btn.textContent=on?'🟣 ใช้ยางยืดอยู่ · เพิ่มท่าดึงในวัน A/B แล้ว (แตะเพื่อปิด)':'🟣 มีอุปกรณ์ยางยืด? แตะเพื่อเปิดใช้';
+    if($('cBand'))$('cBand').checked=on;};
+  const setBand=v=>{localStorage.setItem('eqBand',v?'1':'0');syncEq();const y=window.scrollY;render();window.scrollTo(0,y);};
+  btn.onclick=()=>setBand(!bandOn());
+
+  /* ---------- ตั้งค่า ---------- */
+  const cAltRow=$('cAlt')&&$('cAlt').closest('.srow');if(cAltRow)cAltRow.style.display='none';
+  document.querySelector('#set [data-act="testSound"]').insertAdjacentHTML('beforebegin',
+   `<div class="srow"><span>มีอุปกรณ์: ยางยืด</span><input type="checkbox" id="cBand"></div>
+    <div class="srow"><span>สลับสัปดาห์</span><select id="cAltM" style="border:1.5px solid var(--line);border-radius:10px;padding:6px;font:inherit">
+     <option value="auto">อัตโนมัติ (คี่ ABA · คู่ BAB)</option><option value="aba">A·B·A ตลอด</option><option value="bab">B·A·B ตลอด</option></select></div>`);
+  $('cBand').onchange=e=>setBand(e.target.checked);
+  $('cAltM').value=localStorage.getItem('altMode')||'auto';
+  $('cAltM').onchange=e=>{localStorage.setItem('altMode',e.target.value);render();};
+  document.querySelectorAll('.app details li').forEach(li=>{
+    if(li.textContent.includes('สัปดาห์สลับ'))li.innerHTML='<b>สัปดาห์ถัดไป:</b> แอปสลับให้อัตโนมัติ สัปดาห์คี่ A·B·A สัปดาห์คู่ B·A·B';});
+
+  /* ---------- สลับ ABA / BAB อัตโนมัติ ---------- */
+  const _r=render;
+  render=function(){
+    const m=localStorage.getItem('altMode')||'auto';
+    S.alt=m==='auto'?wk()%2===0:m==='bab';
+    _r();
+    const tl=document.querySelector('#main .dayhead .tl');
+    if(tl)tl.insertAdjacentHTML('beforebegin',` <span class="phase">🔁 สัปดาห์นี้ ${S.alt?'B · A · B':'A · B · A'}${m==='auto'?'':' (ล็อก)'}</span>`);
+  };
+
+  syncEq();render();
+})();
+</script>
 </body>
 </html>
